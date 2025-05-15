@@ -6,8 +6,8 @@ set -e
 DIST_DIR=${1:-$(pwd)/dist}
 
 PROJECT_DIR=$(pwd)
-BUILD_DIR="$PROJECT_DIR/build/build-linux-x86-64"
-BUILD_LOG="$BUILD_DIR/build.log"
+BUILD_DIR=$(pwd)/build/build-linux-arm-64
+BUILD_LOG=$BUILD_DIR/build.log
 
 mkdir -p "$BUILD_DIR"
 touch    "$BUILD_LOG"
@@ -16,10 +16,11 @@ source versions.env
 source sh-sources/common-source.sh
 source sh-sources/src-common.sh
 
-print "Clang       version: $(clang   --version)"
-print "Clang++     version: $(clang++ --version)"
-print "LLVM-ar     version: $(llvm-ar --version)"
-print "LLVM-ranlib version: $(llvm-ranlib --version)"
+
+echo "Clang       version: "$(clang       --version)
+echo "Clang++     version: "$(clang++     --version)
+echo "LLVM-ar     version: "$(llvm-ar     --version)
+echo "LLVM-ranlib version: "$(llvm-ranlib --version)
 
 print_section "Check compiler version"
 ACTUAL_CLANG_VERSION=$(clang --version | grep -o 'clang version [0-9]\+' | awk '{print $3}')
@@ -30,7 +31,6 @@ if [[ $BUILD_CLANG == "true" && $IGNORE_COMPILER_VERSION -eq 0 ]]; then
 fi
 
 print_status "Clang version: $ACTUAL_CLANG_VERSION"
-
 
 print_section "Downloading Source ${FMT_VERSION}"
 ./prepare-src.sh "$BUILD_DIR"
@@ -62,9 +62,9 @@ cmake .. \
 make -j$(nproc) >> "$BUILD_LOG" 2>&1
 make install    >> "$BUILD_LOG" 2>&1
 
-print_section "Packaging"
+print_section "Packaging..."
 mkdir -p "$DIST_DIR"
-BUILD_ZIP="$DIST_DIR/fmt-${FMT_VERSION}_linux-x86-64_clang-${CLANG_VERSION}.zip"
+BUILD_ZIP="$DIST_DIR/fmt-${FMT_VERSION}_linux-arm-64_clang-${CLANG_VERSION}.zip"
 
 cp "$PROJECT_DIR/version.txt"  "$TARGET_DIR"
 cp "$PROJECT_DIR/versions.env" "$TARGET_DIR"
@@ -72,7 +72,7 @@ cp "$PROJECT_DIR/LICENSE"      "$TARGET_DIR"
 cp "$PROJECT_DIR/README.md"    "$TARGET_DIR"
 
 cd "$TARGET_DIR"
-zip -r "$BUILD_ZIP" . >> "$BUILD_LOG"
+zip -r $BUILD_ZIP . >> $BUILD_LOG
 chmod 777 "$BUILD_ZIP"
 
 if [ -f "$BUILD_ZIP" ]; then

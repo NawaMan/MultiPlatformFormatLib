@@ -19,53 +19,15 @@ jobs:
       - name: Set non-interactive frontend
         run: echo 'DEBIAN_FRONTEND=noninteractive' >> $GITHUB_ENV
 
-      - name: Run on x86-64
+      - name: Build on x86-64
         run: |
+          chmod +x *.sh
 
+          echo "Ensure build environment ..."
+          sudo ./ensure-linux-x86-build-environment.sh
 
-
-
-            # Set environment variables
-            export CLANG_VERSION=20
-
-            # Install dependencies
-            sudo apt-get update
-            sudo apt-get install -y      \
-              build-essential            \
-              cmake                      \
-              curl                       \
-              pkg-config                 \
-              unzip                      \
-              wget                       \
-              zip
-            
-            # Install LLVM/Clang
-            wget https://apt.llvm.org/llvm.sh
-            chmod +x llvm.sh || true
-            sudo ./llvm.sh ${CLANG_VERSION}
-            rm llvm.sh
-
-
-
-
-            # Create symlinks for clang and LLVM tools to be available without version suffix
-            sudo update-alternatives --install /usr/bin/clang   clang   /usr/bin/clang-${CLANG_VERSION}   100
-            sudo update-alternatives --install /usr/bin/clang++ clang++ /usr/bin/clang++-${CLANG_VERSION} 100
-            sudo update-alternatives --set                      clang   /usr/bin/clang-${CLANG_VERSION}
-            sudo update-alternatives --set                      clang++ /usr/bin/clang++-${CLANG_VERSION}
-            sudo ln -sf /usr/bin/llvm-ar-${CLANG_VERSION} /usr/bin/llvm-ar
-            sudo ln -sf /usr/bin/llvm-ranlib-${CLANG_VERSION} /usr/bin/llvm-ranlib
-            
-            echo "Setup LLVM/Clang"
-            echo "Clang       version: "$(clang   --version)
-            echo "Clang++     version: "$(clang++ --version)
-            echo "LLVM-ar     version: "$(llvm-ar-${CLANG_VERSION}     --version)
-            echo "LLVM-ranlib version: "$(llvm-ranlib-${CLANG_VERSION} --version)
-            
-            echo "Build ..."
-            ./build-linux-x86-64.sh
-            pwd
-            ls -ls dist
+          echo "Build ..."
+          ./build-linux-x86-64.sh
             
       - name: Upload build artifact
         uses: actions/upload-artifact@v4
@@ -181,44 +143,11 @@ jobs:
           arch: aarch64
           distro: ubuntu22.04
           run: |
-            # Set environment variables
-            export CLANG_VERSION=20
+            chmod +x *.sh
 
-            # Install dependencies
-            apt-get update
-            apt-get install -y           \
-              build-essential            \
-              cmake                      \
-              curl                       \
-              lsb-release                \
-              pkg-config                 \
-              software-properties-common \
-              unzip                      \
-              wget                       \
-              zip
-            
+            echo "Ensure build environment ..."
+            ./ensure-linux-arm-build-environment.sh
 
-            # Install LLVM/Clang
-            wget https://apt.llvm.org/llvm.sh
-            chmod +x llvm.sh || true
-            ./llvm.sh ${CLANG_VERSION}
-            rm llvm.sh
-
-
-            # Create symlinks for clang and LLVM tools to be available without version suffix
-            update-alternatives --install /usr/bin/clang   clang   /usr/bin/clang-${CLANG_VERSION}   100
-            update-alternatives --install /usr/bin/clang++ clang++ /usr/bin/clang++-${CLANG_VERSION} 100
-            update-alternatives --set                      clang   /usr/bin/clang-${CLANG_VERSION}
-            update-alternatives --set                      clang++ /usr/bin/clang++-${CLANG_VERSION}
-            ln -sf /usr/bin/llvm-ar-${CLANG_VERSION} /usr/bin/llvm-ar
-            ln -sf /usr/bin/llvm-ranlib-${CLANG_VERSION} /usr/bin/llvm-ranlib
-            
-            echo "Setup LLVM/Clang"
-            echo "Clang       version: "$(clang   --version)
-            echo "Clang++     version: "$(clang++ --version)
-            echo "LLVM-ar     version: "$(llvm-ar-${CLANG_VERSION}     --version)
-            echo "LLVM-ranlib version: "$(llvm-ranlib-${CLANG_VERSION} --version)
-            
             echo "Build ..."
             ./build-linux-arm-64.sh
             
