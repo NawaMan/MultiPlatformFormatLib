@@ -53,7 +53,7 @@ make install    >> "$BUILD_LOG" 2>&1
 
 print_section "Packaging"
 mkdir -p "$DIST_DIR"
-BUILD_ZIP="$DIST_DIR/fmt-${FMT_VERSION}_linux-${ARCH}-64_clang-${CLANG_VERSION}.zip"
+BUILD_ZIP="$DIST_DIR/fmt-${FMT_VERSION}_linux-x86-64_clang-${CLANG_VERSION}.zip"
 cd "$TARGET_DIR"
 zip -r "$BUILD_ZIP" . >> "$BUILD_LOG"
 chmod 777 "$BUILD_ZIP"
