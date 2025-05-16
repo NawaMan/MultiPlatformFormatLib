@@ -1,7 +1,7 @@
 #!/bin/bash
 
 set -e
-# set -x
+set -x
 
 DIST_DIR=${1:-$(pwd)/dist}
 

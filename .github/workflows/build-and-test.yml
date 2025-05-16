@@ -193,6 +193,7 @@ jobs:
               cmake            \
               curl             \
               gnupg            \
+              lsb-release      \
               pkg-config       \
               unzip            \
               wget             \
