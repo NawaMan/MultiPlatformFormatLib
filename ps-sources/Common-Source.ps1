@@ -12,6 +12,7 @@ if (-not $BUILD_LOG) {
     }
     
     $global:BUILD_LOG = "build\build.log"
+    Write-Output "Build log: $BUILD_LOG"
 }
 
 # == PRINTING FUNCTIONS ==

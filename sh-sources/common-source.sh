@@ -6,6 +6,7 @@ if [[ "$BUILD_LOG" == "" ]]; then
   mkdir -p build
   touch build/build.log
   export BUILD_LOG="build/build.log"
+  print_status "Build log: $BUILD_LOG"
 fi
 
 
