@@ -16,6 +16,7 @@ source versions.env
 source sh-sources/common-source.sh
 source sh-sources/src-common.sh
 
+
 print "Clang       version: $(clang       --version)"
 print "Clang++     version: $(clang++     --version)"
 print "LLVM-ar     version: $(llvm-ar     --version)"
@@ -44,25 +45,27 @@ export CC=clang
 export CXX=clang++
 
 OPT_FLAGS="-O2 -flto -ffunction-sections -fdata-sections -fPIC"
+LINK_FLAGS="-Wl,--gc-sections"
 
 mkdir -p "$SOURCE_DIR/build"
 cd "$SOURCE_DIR/build"
 
-CFLAGS="$OPT_FLAGS" \
-CXXFLAGS="$OPT_FLAGS" \
-cmake .. \
-    -DCMAKE_BUILD_TYPE=Release \
+CFLAGS="$OPT_FLAGS"                      \
+CXXFLAGS="$OPT_FLAGS"                    \
+LDFLAGS="$LINK_FLAGS"                    \
+cmake ..                                 \
+    -DCMAKE_BUILD_TYPE=Release           \
     -DCMAKE_INSTALL_PREFIX="$TARGET_DIR" \
-    -DFMT_DOC=OFF \
-    -DFMT_TEST=OFF \
-    -DFMT_INSTALL=ON \
-    -DBUILD_SHARED_LIBS=OFF \
+    -DFMT_DOC=OFF                        \
+    -DFMT_TEST=OFF                       \
+    -DFMT_INSTALL=ON                     \
+    -DBUILD_SHARED_LIBS=OFF              \
     >> "$BUILD_LOG" 2>&1
 
 make -j$(nproc) >> "$BUILD_LOG" 2>&1
 make install    >> "$BUILD_LOG" 2>&1
 
-print_section "Packaging"
+print_section "Packaging..."
 mkdir -p "$DIST_DIR"
 BUILD_ZIP="$DIST_DIR/fmt-${FMT_VERSION}_linux-x86-64_clang-${CLANG_VERSION}.zip"
 
@@ -71,7 +74,14 @@ cp "$PROJECT_DIR/versions.env" "$TARGET_DIR"
 cp "$PROJECT_DIR/LICENSE"      "$TARGET_DIR"
 cp "$PROJECT_DIR/README.md"    "$TARGET_DIR"
 
-"$PROJECT_DIR/write-build-metadata.sh" "$TARGET_DIR" "Clang" "$ACTUAL_CLANG_VERSION" "Linux" "x86_64" "$OPT_FLAGS"
+"$PROJECT_DIR/write-build-metadata.sh" \
+    "$TARGET_DIR"                      \ 
+    "Clang"                            \ 
+    "$ACTUAL_CLANG_VERSION"            \ 
+    "Linux"                            \ 
+    "x86_64"                           \ 
+    "$OPT_FLAGS"                       \ 
+    "$LINK_FLAGS"
 
 cd "$TARGET_DIR"
 zip -r "$BUILD_ZIP" . >> "$BUILD_LOG"

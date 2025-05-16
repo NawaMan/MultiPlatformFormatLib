@@ -6,8 +6,8 @@ set -e
 DIST_DIR=${1:-$(pwd)/dist}
 
 PROJECT_DIR=$(pwd)
-BUILD_DIR=$(pwd)/build/build-linux-arm-64
-BUILD_LOG=$BUILD_DIR/build.log
+BUILD_DIR="$PROJECT_DIR/build/build-linux-arm-64"
+BUILD_LOG="$BUILD_DIR/build.log"
 
 mkdir -p "$BUILD_DIR"
 touch    "$BUILD_LOG"
@@ -17,10 +17,10 @@ source sh-sources/common-source.sh
 source sh-sources/src-common.sh
 
 
-echo "Clang       version: "$(clang       --version)
-echo "Clang++     version: "$(clang++     --version)
-echo "LLVM-ar     version: "$(llvm-ar     --version)
-echo "LLVM-ranlib version: "$(llvm-ranlib --version)
+print "Clang       version: $(clang       --version)"
+print "Clang++     version: $(clang++     --version)"
+print "LLVM-ar     version: $(llvm-ar     --version)"
+print "LLVM-ranlib version: $(llvm-ranlib --version)"
 
 print_section "Check compiler version"
 ACTUAL_CLANG_VERSION=$(clang --version | grep -o 'clang version [0-9]\+' | awk '{print $3}')
@@ -31,6 +31,7 @@ if [[ $BUILD_CLANG == "true" && $IGNORE_COMPILER_VERSION -eq 0 ]]; then
 fi
 
 print_status "Clang version: $ACTUAL_CLANG_VERSION"
+
 
 print_section "Downloading Source ${FMT_VERSION}"
 ./prepare-src.sh "$BUILD_DIR"
@@ -44,19 +45,21 @@ export CC=clang
 export CXX=clang++
 
 OPT_FLAGS="-O2 -flto -ffunction-sections -fdata-sections -fPIC"
+LINK_FLAGS="-Wl,--gc-sections"
 
 mkdir -p "$SOURCE_DIR/build"
 cd "$SOURCE_DIR/build"
 
-CFLAGS="$OPT_FLAGS" \
-CXXFLAGS="$OPT_FLAGS" \
-cmake .. \
-    -DCMAKE_BUILD_TYPE=Release \
+CFLAGS="$OPT_FLAGS"                      \
+CXXFLAGS="$OPT_FLAGS"                    \
+LDFLAGS="$LINK_FLAGS"                    \
+cmake ..                                 \
+    -DCMAKE_BUILD_TYPE=Release           \
     -DCMAKE_INSTALL_PREFIX="$TARGET_DIR" \
-    -DFMT_DOC=OFF \
-    -DFMT_TEST=OFF \
-    -DFMT_INSTALL=ON \
-    -DBUILD_SHARED_LIBS=OFF \
+    -DFMT_DOC=OFF                        \
+    -DFMT_TEST=OFF                       \
+    -DFMT_INSTALL=ON                     \
+    -DBUILD_SHARED_LIBS=OFF              \
     >> "$BUILD_LOG" 2>&1
 
 make -j$(nproc) >> "$BUILD_LOG" 2>&1
@@ -71,10 +74,17 @@ cp "$PROJECT_DIR/versions.env" "$TARGET_DIR"
 cp "$PROJECT_DIR/LICENSE"      "$TARGET_DIR"
 cp "$PROJECT_DIR/README.md"    "$TARGET_DIR"
 
-"$PROJECT_DIR/write-build-metadata.sh" "$TARGET_DIR" "Clang" "$ACTUAL_CLANG_VERSION" "Linux" "arm64" "$OPT_FLAGS"
+"$PROJECT_DIR/write-build-metadata.sh" \
+    "$TARGET_DIR"                      \
+    "Clang"                            \
+    "$ACTUAL_CLANG_VERSION"            \
+    "Linux"                            \
+    "arm64"                            \
+    "$OPT_FLAGS"                       \ 
+    "$LINK_FLAGS"
 
 cd "$TARGET_DIR"
-zip -r $BUILD_ZIP . >> $BUILD_LOG
+zip -r "$BUILD_ZIP" . >> "$BUILD_LOG"
 chmod 777 "$BUILD_ZIP"
 
 if [ -f "$BUILD_ZIP" ]; then
