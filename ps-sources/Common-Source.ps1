@@ -1,6 +1,6 @@
 # SOURCE ME - DO NOT RUN (Use . .\Common-Source.ps1 to source this file)
 
-if (-not $BUILD_LOG) {
+if (-not $BuildLog) {
     Write-Output "BUILD_LOG is not set!"
     
     if (-not (Test-Path -Path "build")) {
@@ -11,8 +11,8 @@ if (-not $BUILD_LOG) {
         New-Item -ItemType File -Path "build\build.log" | Out-Null
     }
     
-    $global:BUILD_LOG = "build\build.log"
-    Write-Output "Build log: $BUILD_LOG"
+    $global:BuildLog = "build\build.log"
+    Write-Output "Build log: $BuildLog"
 }
 
 # == PRINTING FUNCTIONS ==
@@ -31,12 +31,12 @@ function Write-Log {
     )
     
     Write-Output $Message
-    Add-Content -Path $BUILD_LOG -Value $Message
+    Add-Content -Path $BuildLog -Value $Message
 }
 
 function Write-EmptyLine {
     Write-Output ""
-    Add-Content -Path $BUILD_LOG -Value ""
+    Add-Content -Path $BuildLog -Value ""
 }
 
 function Write-Section {
@@ -49,9 +49,9 @@ function Write-Section {
     Write-Host "=== $Title ===" -ForegroundColor $YELLOW
     Write-Output ""
     
-    Add-Content -Path $BUILD_LOG -Value ""
-    Add-Content -Path $BUILD_LOG -Value "=== $Title ==="
-    Add-Content -Path $BUILD_LOG -Value ""
+    Add-Content -Path $BuildLog -Value ""
+    Add-Content -Path $BuildLog -Value "=== $Title ==="
+    Add-Content -Path $BuildLog -Value ""
 }
 
 function Write-Status {
@@ -63,8 +63,8 @@ function Write-Status {
     Write-Host $Message -ForegroundColor $BLUE
     Write-Output ""
     
-    Add-Content -Path $BUILD_LOG -Value $Message
-    Add-Content -Path $BUILD_LOG -Value ""
+    Add-Content -Path $BuildLog -Value $Message
+    Add-Content -Path $BuildLog -Value ""
 }
 
 function Exit-WithError {
@@ -74,6 +74,6 @@ function Exit-WithError {
     )
     
     Write-Host "ERROR: $ErrorMessage" -ForegroundColor $RED
-    Add-Content -Path $BUILD_LOG -Value "ERROR: $ErrorMessage"
+    Add-Content -Path $BuildLog -Value "ERROR: $ErrorMessage"
     exit 1
 }

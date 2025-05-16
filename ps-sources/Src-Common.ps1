@@ -16,7 +16,7 @@ function Get-SourceCode {
     Write-Log "Ensure source"
     if (-not (Test-Path -Path $SrcFile)) {
         $SrcUrl = "https://github.com/fmtlib/fmt/archive/refs/tags/$SrcVersion.zip"
-        Write-Log "📥 Downloading SRC..."
+        Write-Log "Downloading SRC..."
         Invoke-WebRequest -Uri $SrcUrl -OutFile $SrcFile
         Write-Log ""
     }
@@ -31,7 +31,7 @@ function Expand-SourceArchive {
         [string]$SrcDir
     )
     
-    Write-Log "📦 Extracting source to $SrcDir ..."
+    Write-Log "Extracting source to $SrcDir ..."
     
     # Remove directory if it exists and create a new one
     if (Test-Path -Path $SrcDir) {

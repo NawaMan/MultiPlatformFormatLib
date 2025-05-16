@@ -1,7 +1,7 @@
 #!/bin/bash
 
 set -e
-set -x
+# set -x
 
 DIST_DIR=${1:-$(pwd)/dist}
 
@@ -70,6 +70,8 @@ cp "$PROJECT_DIR/version.txt"  "$TARGET_DIR"
 cp "$PROJECT_DIR/versions.env" "$TARGET_DIR"
 cp "$PROJECT_DIR/LICENSE"      "$TARGET_DIR"
 cp "$PROJECT_DIR/README.md"    "$TARGET_DIR"
+
+"$PROJECT_DIR/write-build-metadata.sh" "$TARGET_DIR" "Clang" "$ACTUAL_CLANG_VERSION" "Linux" "x86_64" "$OPT_FLAGS"
 
 cd "$TARGET_DIR"
 zip -r "$BUILD_ZIP" . >> "$BUILD_LOG"
