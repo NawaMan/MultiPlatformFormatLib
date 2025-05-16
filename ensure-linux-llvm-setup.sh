@@ -9,7 +9,7 @@ print_section() {
 
 
 # Set environment variables
-export CLANG_VERSION=20
+export CLANG_VERSION=$(cat versions.env | grep CLANG_VERSION | cut -d= -f2)
 
 tool-version() {
     local cmd="$1"

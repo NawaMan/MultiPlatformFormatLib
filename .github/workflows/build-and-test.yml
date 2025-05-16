@@ -211,3 +211,34 @@ jobs:
           run: |
             chmod +x simple-test
             ./simple-test
+
+  # Windows Build Job
+  build-windows:
+    name: Build (Windows)
+    runs-on: windows-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Setup LLVM/Clang
+        shell: pwsh
+        run: |
+          .\Ensure-WindowsLlvmSetup.ps1
+
+      - name: Build on Windows
+        shell: pwsh
+        run: |
+          # Create build directories
+          New-Item -ItemType Directory -Path build -Force | Out-Null
+          New-Item -ItemType Directory -Path dist -Force | Out-Null
+
+          # TODO: Add Windows build script here
+          # Example: .\build-windows.ps1
+
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: fmt-windows
+          path: dist/fmt-*_windows_*.zip
+          if-no-files-found: warn
+          retention-days: 1
