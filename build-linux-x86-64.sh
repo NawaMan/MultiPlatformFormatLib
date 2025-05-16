@@ -16,9 +16,9 @@ source versions.env
 source sh-sources/common-source.sh
 source sh-sources/src-common.sh
 
-print "Clang       version: $(clang   --version)"
-print "Clang++     version: $(clang++ --version)"
-print "LLVM-ar     version: $(llvm-ar --version)"
+print "Clang       version: $(clang       --version)"
+print "Clang++     version: $(clang++     --version)"
+print "LLVM-ar     version: $(llvm-ar     --version)"
 print "LLVM-ranlib version: $(llvm-ranlib --version)"
 
 print_section "Check compiler version"

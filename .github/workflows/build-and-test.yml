@@ -22,6 +22,8 @@ jobs:
       - name: Build on x86-64
         run: |
           chmod +x *.sh
+          mkdir -p build
+          mkdir -p dist
 
           echo "Ensure build environment ..."
           sudo ./ensure-linux-x86-build-environment.sh
@@ -144,6 +146,8 @@ jobs:
           distro: ubuntu22.04
           run: |
             chmod +x *.sh
+            mkdir -p build
+            mkdir -p dist
 
             echo "Ensure build environment ..."
             ./ensure-linux-arm-build-environment.sh
