@@ -220,21 +220,14 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      - name: Setup LLVM/Clang
-        shell: pwsh
-        run: |
-          .\Ensure-WindowsLlvmSetup.ps1
-
-      - name: Build on Windows
+      - name: Setup Windows build environment
         shell: pwsh
         run: |
           # Create build directories
           New-Item -ItemType Directory -Path build -Force | Out-Null
           New-Item -ItemType Directory -Path dist -Force | Out-Null
-
-          # TODO: Add Windows build script here
-          # Example: .\build-windows.ps1
-
+          .\Ensure-WindowsBuildEnvironment.ps1
+      
       - name: Upload build artifact
         uses: actions/upload-artifact@v4
         with:
