@@ -19,12 +19,15 @@ unzip     "$DIST_FILE" -d "$BUILD_DIR"
 echo "Compiling..."
 echo "BUILD_DIR: $BUILD_DIR"
 
-clang++ simple-test.cpp \
-  -std=c++23 \
+clang++ simple-test.cpp  \
+  -std=c++23             \
   -I"$BUILD_DIR/include" \
-  -L"$BUILD_DIR/lib" -lfmt \
-  -O2 -flto -ffunction-sections -fdata-sections \
-  -Wl,--gc-sections \
+  -L"$BUILD_DIR/lib"     \
+  -O2                    \
+  -flto                  \
+  -ffunction-sections    \
+  -fdata-sections        \
+  -Wl,--gc-sections      \
   -o simple-test
 
 echo ""
