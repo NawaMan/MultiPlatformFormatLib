@@ -213,7 +213,7 @@ jobs:
             ./simple-test
 
   # Windows Build Job
-  build-windows:
+  build-windows-x86-64:
     name: Build (Windows)
     runs-on: windows-latest
     steps:
@@ -237,3 +237,51 @@ jobs:
           path: dist/fmt-*_windows-x86-64_*.zip
           if-no-files-found: warn
           retention-days: 1
+
+  # Windows x86-64 Build Test Job
+  build-test-windows-x86-64:
+    name: Build Test (Windows x86-64)
+    needs: build-windows-x86-64
+    runs-on: windows-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v3
+
+    - name: Download build artifact
+      uses: actions/download-artifact@v4
+      with:
+        name: fmt-windows-x86-64
+        path: dist
+
+    - name: Enable UTF-8 and allow script execution
+      run: |
+        chcp 65001
+        Set-ExecutionPolicy Bypass -Scope Process -Force
+
+    - name: Build test executable
+      shell: pwsh
+      run: |
+        $distFile = Get-ChildItem -Path "dist" -Filter "fmt-*_windows-x86-64_*.zip" -Recurse | Select-Object -ExpandProperty FullName
+        ./tests/Build-SimpleTest-windows-x86-64.ps1 $distFile
+
+    - name: Upload test binary
+      uses: actions/upload-artifact@v4
+      with:
+        name: fmt-windows-x86-64-test
+        path: tests/simple-test.exe
+        
+  run-test-windows-x86-64:
+    name: Run Test (Windows x86-64)
+    needs: build-test-windows-x86-64
+    runs-on: windows-latest
+
+    steps:
+      - name: Download test binary
+        uses: actions/download-artifact@v4
+        with:
+          name: fmt-windows-x86-64-test
+
+      - name: Run test
+        run: .\simple-test.exe
+        shell: cmd
