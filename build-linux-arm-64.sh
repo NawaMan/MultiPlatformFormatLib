@@ -80,7 +80,7 @@ cp "$PROJECT_DIR/README.md"    "$TARGET_DIR"
     "$ACTUAL_CLANG_VERSION"            \
     "Linux"                            \
     "arm64"                            \
-    "$OPT_FLAGS"                       \ 
+    "$OPT_FLAGS"                       \
     "$LINK_FLAGS"
 
 cd "$TARGET_DIR"

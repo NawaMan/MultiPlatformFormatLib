@@ -262,15 +262,16 @@ jobs:
     - name: Build test executable
       shell: pwsh
       run: |
-        $distFile = Get-ChildItem -Path "dist" -Filter "fmt-*_windows-x86-64_*.zip" -Recurse | Select-Object -ExpandProperty FullName
-        ./tests/Build-SimpleTest-windows-x86-64.ps1 $distFile
+        cd tests
+        $distFile = Get-ChildItem -Path "../dist" -Filter "fmt-*_windows-x86-64_*.zip" -Recurse | Select-Object -ExpandProperty FullName
+        ./Build-SimpleTest-windows-x86-64.ps1 $distFile
 
     - name: Upload test binary
       uses: actions/upload-artifact@v4
       with:
         name: fmt-windows-x86-64-test
         path: tests/simple-test.exe
-        
+
   run-test-windows-x86-64:
     name: Run Test (Windows x86-64)
     needs: build-test-windows-x86-64
