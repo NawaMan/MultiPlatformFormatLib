@@ -5,13 +5,15 @@ function Write-BuildMetadata {
         [string]$CompilerVersion,
         [string]$TargetOS,
         [string]$Arch,
-        [string]$OptFlags
+        [string]$OptFlags,
+        [string]$LinkFlags
     )
 
     $buildFlags = @"
 # Build Flags
 CFLAGS   = $OptFlags
 CXXFLAGS = $OptFlags
+LDFLAGS  = $LinkFlags
 Compiler = $Compiler $CompilerVersion
 Target   = $TargetOS $Arch
 "@
@@ -29,6 +31,7 @@ This archive contains a statically compiled build of the [fmt](https://github.co
 - Target:   $TargetOS $Arch
 - CFLAGS:   $OptFlags
 - CXXFLAGS: $OptFlags
+- LDFLAGS:  $LinkFlags
 
 ## Contents
 

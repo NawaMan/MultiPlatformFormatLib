@@ -6,11 +6,13 @@ COMPILER_VERSION="$3"
 TARGET_OS="$4"
 ARCH="$5"
 FLAGS="$6"
+LINK_FLAGS="$7"
 
 cat > "$TARGET_DIR/build-flags.txt" <<EOF
 # Build Flags
 CFLAGS   = $FLAGS
 CXXFLAGS = $FLAGS
+LDFLAGS  = $LINK_FLAGS
 Compiler = $COMPILER_NAME $COMPILER_VERSION
 Target   = $TARGET_OS $ARCH
 EOF
@@ -26,6 +28,7 @@ This archive contains a statically compiled build of the [fmt](https://github.co
 - Target:   $TARGET_OS $ARCH
 - CFLAGS:   $FLAGS
 - CXXFLAGS: $FLAGS
+- LDFLAGS:  $LINK_FLAGS
 
 ## Contents
 

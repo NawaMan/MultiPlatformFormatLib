@@ -88,11 +88,13 @@ Write-Section "Building fmt"
 $SourceDir = "$BuildDir\fmt-source\fmt-$env:FMT_VERSION"
 $TargetDir = "$BuildDir\fmt-target"
 $OptFlags = "-O2 -flto -ffunction-sections -fdata-sections -fPIC"
+$LinkFlags = "-Wl,--gc-sections"
 
-$env:CC = "clang"
-$env:CXX = "clang++"
-$env:CFLAGS = $OptFlags
+$env:CC       = "clang"
+$env:CXX      = "clang++"
+$env:CFLAGS   = $OptFlags
 $env:CXXFLAGS = $OptFlags
+$env:LDFLAGS  = $LinkFlags
 
 New-Item -ItemType Directory -Force -Path "$SourceDir\build" | Out-Null
 Set-Location "$SourceDir\build"
@@ -104,6 +106,7 @@ cmake .. `
     -DFMT_TEST=OFF `
     -DFMT_INSTALL=ON `
     -DBUILD_SHARED_LIBS=OFF `
+    -DCMAKE_MSVC_RUNTIME_LIBRARY="MultiThreaded" `
     *> $BuildLog 2>&1
 
 cmake --build . --config Release --parallel *> $BuildLog 2>&1
@@ -127,7 +130,8 @@ Write-BuildMetadata `
     -CompilerVersion $ActualClangVersion `
     -TargetOS "Windows" `
     -Arch "x86_64" `
-    -OptFlags $OptFlags
+    -OptFlags $OptFlags `
+    -LinkFlags $LinkFlags
 
 Set-Location $TargetDir
 Compress-Archive -Path * -DestinationPath $BuildZip -Force
