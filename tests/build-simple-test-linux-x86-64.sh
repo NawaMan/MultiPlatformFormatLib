@@ -23,6 +23,7 @@ clang++ simple-test.cpp  \
   -std=c++23             \
   -I"$BUILD_DIR/include" \
   -L"$BUILD_DIR/lib"     \
+  -lfmt                  \
   -O2                    \
   -flto                  \
   -ffunction-sections    \
