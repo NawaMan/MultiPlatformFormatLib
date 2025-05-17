@@ -286,3 +286,29 @@ jobs:
       - name: Run test
         run: .\simple-test.exe
         shell: cmd
+
+  # Windows Build Job
+  build-windows-arm-64:
+    name: Build (Windows arm)
+    runs-on: windows-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Setup Windows build environment
+        shell: pwsh
+        run: |
+          # Create build directories
+          New-Item -ItemType Directory -Path build -Force | Out-Null
+          New-Item -ItemType Directory -Path dist -Force | Out-Null
+          .\Ensure-WindowsBuildEnvironment.ps1
+
+          .\Build-Windows-arm-64.ps1
+      
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: fmt-windows-arm-64
+          path: dist/fmt-*_windows-arm64_*.zip
+          if-no-files-found: warn
+          retention-days: 1
