@@ -15,7 +15,7 @@ $BuildLog = "$BuildDir\build.log"
 . .\ps-sources\Src-Common.ps1
 
 New-Item -ItemType Directory -Force -Path $BuildDir | Out-Null
-New-Item -ItemType File -Force -Path $BuildLog | Out-Null
+New-Item -ItemType File      -Force -Path $BuildLog | Out-Null
 
 # Load environment
 $envLines = (Get-Content .\versions.env -Raw -Encoding UTF8).Replace("`u{FEFF}", "") -split "`n"
