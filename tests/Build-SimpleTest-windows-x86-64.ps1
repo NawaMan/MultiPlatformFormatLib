@@ -23,8 +23,8 @@ Write-Host "BUILD_DIR: $BuildDir"
 
 $IncludeDir = "$BuildDir\include"
 $LibDir     = "$BuildDir\lib"
-$OutputExe  = "$PWD\simple-test.exe"
-$Compiler = "clang++"
+$OutputExe  = "$PWD\simple-test-x86-64.exe"
+$Compiler   = "clang++"
 
 $CompileArgs = @(
     "simple-test.cpp",
@@ -33,8 +33,8 @@ $CompileArgs = @(
     "-D_CRT_SECURE_NO_WARNINGS",
     "-I$IncludeDir",
     "-o", $OutputExe,
-    "--target=x86_64-windows",           # 👈 Important: this makes it x86
-    "-L$LibDir", "-lfmt"               # Or use "fmt.lib" if you're using MSVC-style .lib
+    "--target=x86_64-windows",
+    "-L$LibDir", "-lfmt"
 )
 
 & $Compiler @CompileArgs
@@ -44,4 +44,4 @@ if ($LASTEXITCODE -ne 0) {
 }
 
 Write-Host "`n✅ Success!"
-Write-Host "Test is ready to run: .\simple-test.exe"
+Write-Host "Test is ready to run (on Windows x86-64): .\simple-test-x86-64.exe"

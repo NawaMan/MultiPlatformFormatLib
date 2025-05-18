@@ -284,7 +284,7 @@ jobs:
           name: fmt-windows-x86-64-test
 
       - name: Run test
-        run: .\simple-test.exe
+        run: .\simple-test-x86-64.exe
         shell: cmd
 
   # Windows Build Job
@@ -360,5 +360,5 @@ jobs:
           name: fmt-windows-arm-64-test
 
       - name: Run test
-        run: .\simple-test-arm64.exe
+        run: .\simple-test-arm-64.exe
         shell: cmd

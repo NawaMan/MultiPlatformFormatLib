@@ -23,7 +23,7 @@ Write-Host "BUILD_DIR: $BuildDir"
 
 $IncludeDir = "$BuildDir\include"
 $LibDir     = "$BuildDir\lib"
-$OutputExe  = "$PWD\simple-test-arm64.exe"
+$OutputExe  = "$PWD\simple-test-arm-64.exe"
 $Compiler   = "clang++"
 
 $CompileArgs = @(
