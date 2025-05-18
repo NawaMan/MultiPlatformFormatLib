@@ -33,7 +33,7 @@ $CompileArgs = @(
     "-D_CRT_SECURE_NO_WARNINGS",
     "-I$IncludeDir",
     "-o", $OutputExe,
-    "--target=i686-windows",           # 👈 Important: this makes it x86
+    "--target=x86_64-windows",           # 👈 Important: this makes it x86
     "-L$LibDir", "-lfmt"               # Or use "fmt.lib" if you're using MSVC-style .lib
 )
 
