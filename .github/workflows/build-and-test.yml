@@ -382,7 +382,7 @@ jobs:
 
       - name: Ensure build environment
         run: |
-          ./setup-macos-env.sh
+          ./ensure-macos-build-environment.sh
 
       - name: Build macOS Universal binary
         run: |
