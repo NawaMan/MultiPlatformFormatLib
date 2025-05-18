@@ -366,3 +366,32 @@ jobs:
   #       run: .\simple-test-arm-64.exe
   #       shell: cmd
 
+  # macOS Universal Build Job
+  build-macos-universal:
+    name: Build (macOS Universal)
+    runs-on: macos-13 # or macos-14 if using latest Xcode
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set non-interactive frontend
+        run: echo 'HOMEBREW_NO_AUTO_UPDATE=1' >> $GITHUB_ENV
+
+      - name: Make scripts executable
+        run: chmod +x *.sh sh-sources/*.sh
+
+      - name: Ensure build environment
+        run: |
+          ./setup-macos-env.sh
+
+      - name: Build macOS Universal binary
+        run: |
+          ./build-macos-universal.sh
+
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: fmt-macos-universal
+          path: dist/fmt-*_macos-universal_*.zip
+          if-no-files-found: error
+          retention-days: 1
