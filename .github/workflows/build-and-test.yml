@@ -395,3 +395,42 @@ jobs:
           path: dist/fmt-*_macos-universal_*.zip
           if-no-files-found: error
           retention-days: 1
+  
+  build-test-macos-universal:
+    name: Build Test (macOS Universal)
+    needs: build-macos-universal
+    runs-on: macos-13
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set non-interactive frontend
+        run: echo 'HOMEBREW_NO_AUTO_UPDATE=1' >> $GITHUB_ENV
+
+      - name: Make scripts executable
+        run: chmod +x *.sh sh-sources/*.sh tests/*.sh
+
+      - name: Download build artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: fmt-macos-universal
+          path: dist
+
+      - name: Ensure macOS build environment
+        run: |
+          ./ensure-macos-build-environment.sh
+
+      - name: Run macOS Universal test build
+        run: |
+          DIST_FILE=$(find dist -name 'fmt-*_macos-universal_*.zip' -type f)
+          cd tests
+          ./build-simple-test-macos-universal.sh "../$DIST_FILE"
+
+      - name: Upload test artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: fmt-macos-universal-test
+          path: tests/simple-test
+          if-no-files-found: error
+          retention-days: 1
+
