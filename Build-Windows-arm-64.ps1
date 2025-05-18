@@ -76,7 +76,7 @@ cmake --install . *> $BuildLog 2>&1
 Write-Section "Packaging"
 
 New-Item -ItemType Directory -Force -Path $DistDir | Out-Null
-$BuildZip = "$DistDir\fmt-$env:FMT_VERSION`_windows-arm64_clang-$env:CLANG_VERSION.zip"
+$BuildZip = "$DistDir\fmt-$env:FMT_VERSION`_windows-arm-64_clang-$env:CLANG_VERSION.zip"
 
 Copy-Item "$ProjectDir\version.txt"  "$TargetDir" -Force
 Copy-Item "$ProjectDir\versions.env" "$TargetDir" -Force
