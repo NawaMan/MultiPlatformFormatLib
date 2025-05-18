@@ -24,17 +24,17 @@ Write-Host "BUILD_DIR: $BuildDir"
 $IncludeDir = "$BuildDir\include"
 $LibDir     = "$BuildDir\lib"
 $OutputExe  = "$PWD\simple-test-arm64.exe"
-$Compiler   = "clang-cl"
+$Compiler   = "clang++"
 
 $CompileArgs = @(
     "simple-test.cpp",
-    "/std:c++23",
-    "/O2",
-    "/D_CRT_SECURE_NO_WARNINGS",
-    "/I$IncludeDir",
-    "/Fe:$OutputExe",
-    "/target:arm64",
-    "/link", "/LIBPATH:$LibDir", "fmt.lib"
+    "-std=c++23",
+    "-O2",
+    "-D_CRT_SECURE_NO_WARNINGS",
+    "-I$IncludeDir",
+    "-o", $OutputExe,
+    "--target=arm64-windows",
+    "-L$LibDir", "-lfmt"
 )
 
 & $Compiler @CompileArgs

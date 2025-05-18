@@ -24,16 +24,17 @@ Write-Host "BUILD_DIR: $BuildDir"
 $IncludeDir = "$BuildDir\include"
 $LibDir     = "$BuildDir\lib"
 $OutputExe  = "$PWD\simple-test.exe"
-$Compiler   = "clang-cl"
+$Compiler = "clang++"
 
 $CompileArgs = @(
     "simple-test.cpp",
-    "/std:c++20",
-    "/O2",
-    "/D_CRT_SECURE_NO_WARNINGS",  # Optional: silence the localtime warning
-    "/I$IncludeDir",
-    "/Fe:$OutputExe",
-    "/link", "/LIBPATH:$LibDir", "fmt.lib"
+    "-std=c++23",
+    "-O2",
+    "-D_CRT_SECURE_NO_WARNINGS",
+    "-I$IncludeDir",
+    "-o", $OutputExe,
+    "--target=i686-windows",           # 👈 Important: this makes it x86
+    "-L$LibDir", "-lfmt"               # Or use "fmt.lib" if you're using MSVC-style .lib
 )
 
 & $Compiler @CompileArgs
