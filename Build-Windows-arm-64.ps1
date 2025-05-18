@@ -46,9 +46,10 @@ $SourceDir = "$BuildDir\fmt-source\fmt-$env:FMT_VERSION"
 $TargetDir = "$BuildDir\fmt-target"
 $OptFlags = "-O2 -flto -ffunction-sections -fdata-sections -fPIC"
 $LinkFlags = "-Wl,--gc-sections"
+$TargetTriple = "aarch64-windows"
 
-$env:CC       = "clang"
-$env:CXX      = "clang++"
+$env:CC       = "clang --target=$TargetTriple"
+$env:CXX      = "clang++ --target=$TargetTriple"
 $env:CFLAGS   = $OptFlags
 $env:CXXFLAGS = $OptFlags
 $env:LDFLAGS  = $LinkFlags
@@ -63,11 +64,12 @@ cmake .. `
     -DFMT_TEST=OFF `
     -DFMT_INSTALL=ON `
     -DBUILD_SHARED_LIBS=OFF `
-    -DCMAKE_MSVC_RUNTIME_LIBRARY="MultiThreaded" `
     -DCMAKE_SYSTEM_NAME="Windows" `
     -DCMAKE_SYSTEM_PROCESSOR="ARM64" `
-    -DCMAKE_C_COMPILER="clang-cl" `
-    -DCMAKE_CXX_COMPILER="clang-cl" `
+    -DCMAKE_C_COMPILER="clang" `
+    -DCMAKE_CXX_COMPILER="clang++" `
+    -DCMAKE_C_COMPILER_TARGET=$TargetTriple `
+    -DCMAKE_CXX_COMPILER_TARGET=$TargetTriple `
     *> $BuildLog 2>&1
 
 cmake --build . --config Release --parallel *> $BuildLog 2>&1

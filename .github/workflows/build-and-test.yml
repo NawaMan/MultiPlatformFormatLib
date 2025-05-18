@@ -270,7 +270,7 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
         name: fmt-windows-x86-64-test
-        path: tests/simple-test.exe
+        path: tests/simple-test-x86-64.exe
 
   run-test-windows-x86-64:
     name: Run Test (Windows x86-64)
