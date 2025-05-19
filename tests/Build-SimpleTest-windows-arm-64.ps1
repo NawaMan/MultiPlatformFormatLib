@@ -33,7 +33,7 @@ $CompileArgs = @(
     "-I$IncludeDir",
     "-o", $OutputExe,
     "--target=arm64-windows",
-    "-L$LibDir\windows-arm64", 
+    "-L$LibDir\lib-windows-arm-64", 
     "-lfmt"
 )
 

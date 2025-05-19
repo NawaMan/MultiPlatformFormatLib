@@ -29,6 +29,9 @@ export CXX=/usr/bin/clang++
 # ✅ Use macOS SDK
 SDKROOT=$(xcrun --sdk macosx --show-sdk-path)
 
+echo "BUILD_DIR: $BUILD_DIR"
+ls -la "$BUILD_DIR"
+
 # Can't use -flto so not sure how much inefficient use of space this is
 COMMON_FLAGS="-std=c++2b -isysroot $SDKROOT -I$BUILD_DIR/include -L$BUILD_DIR/lib-macos-universal -lfmt -O2 -ffunction-sections -fdata-sections"
 LINK_FLAGS="-Wl,-dead_strip"
