@@ -23,6 +23,9 @@ OUTPUT_X86="$BUILD_DIR/${OUTPUT_NAME}_x86_64"
 OUTPUT_ARM="$BUILD_DIR/${OUTPUT_NAME}_arm64"
 OUTPUT_UNIVERSAL="./${OUTPUT_NAME}"
 
+pwd
+ls -la "$BUILD_DIR"
+
 COMMON_FLAGS="-std=c++23 -I$BUILD_DIR/include -L$BUILD_DIR/lib -lfmt -O2 -flto -ffunction-sections -fdata-sections"
 LINK_FLAGS="-Wl,-dead_strip"
 

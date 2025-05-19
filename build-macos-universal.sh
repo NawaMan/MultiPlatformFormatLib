@@ -16,6 +16,7 @@ source versions.env
 source sh-sources/common-source.sh
 source sh-sources/src-common.sh
 
+
 print "Clang       version: $(clang       --version)"
 print "Clang++     version: $(clang++     --version)"
 print "LLVM-ar     version: $(llvm-ar     --version)"
@@ -31,20 +32,23 @@ fi
 
 print_status "Clang version: $ACTUAL_CLANG_VERSION"
 
+
 print_section "Downloading Source ${FMT_VERSION}"
 ./prepare-src.sh "$BUILD_DIR"
+
+print_section "Building fmt"
+
+SOURCE_DIR="$BUILD_DIR/fmt-source/fmt-${FMT_VERSION}"
 
 ARCHS=("x86_64" "arm64")
 UNIVERSAL_TARGET_DIR="$BUILD_DIR/fmt-universal"
 UNIVERSAL_LIB_NAME="libfmt.a"
 UNIVERSAL_LIB_PATH="$UNIVERSAL_TARGET_DIR/lib/$UNIVERSAL_LIB_NAME"
-
 LIB_PATHS=()
 
 for ARCH in "${ARCHS[@]}"; do
     print_section "Building fmt for $ARCH"
 
-    SOURCE_DIR="$BUILD_DIR/fmt-source/fmt-${FMT_VERSION}"
     TARGET_DIR="$BUILD_DIR/fmt-target-$ARCH"
     BUILD_SUBDIR="$SOURCE_DIR/build-$ARCH"
 
@@ -70,7 +74,7 @@ for ARCH in "${ARCHS[@]}"; do
         >> "$BUILD_LOG" 2>&1
 
     make -j$(sysctl -n hw.logicalcpu) >> "$BUILD_LOG" 2>&1
-    make install                       >> "$BUILD_LOG" 2>&1
+    make install                      >> "$BUILD_LOG" 2>&1
 
     LIB_PATHS+=("$TARGET_DIR/lib/$UNIVERSAL_LIB_NAME")
 done
@@ -84,10 +88,20 @@ print_section "Packaging..."
 mkdir -p "$DIST_DIR"
 BUILD_ZIP="$DIST_DIR/fmt-${FMT_VERSION}_macos-universal_clang-${CLANG_VERSION}.zip"
 
+cp -R "$SOURCE_DIR/include"    "$UNIVERSAL_TARGET_DIR"
 cp "$PROJECT_DIR/version.txt"  "$UNIVERSAL_TARGET_DIR"
 cp "$PROJECT_DIR/versions.env" "$UNIVERSAL_TARGET_DIR"
 cp "$PROJECT_DIR/LICENSE"      "$UNIVERSAL_TARGET_DIR"
 cp "$PROJECT_DIR/README.md"    "$UNIVERSAL_TARGET_DIR"
+
+echo "UNIVERSAL_TARGET_DIR : $UNIVERSAL_TARGET_DIR"
+ls -la "$UNIVERSAL_TARGET_DIR"
+
+echo "UNIVERSAL_TARGET_DIR / include : $UNIVERSAL_TARGET_DIR/include"
+ls -la "$UNIVERSAL_TARGET_DIR/include"
+
+echo "UNIVERSAL_TARGET_DIR / include / fmt : $UNIVERSAL_TARGET_DIR/include/fmt"
+ls -la "$UNIVERSAL_TARGET_DIR/include/fmt"
 
 "$PROJECT_DIR/write-build-metadata.sh" \
     "$UNIVERSAL_TARGET_DIR"            \
