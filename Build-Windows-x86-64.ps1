@@ -113,12 +113,8 @@ cmake --build . --config Release --parallel *> $BuildLog 2>&1
 cmake --install . *> $BuildLog 2>&1
 
 # Rename the static library
-Write-Output "TargetDir: $TargetDir"
-Get-ChildItem "$TargetDir"
-Get-ChildItem "$TargetDir\lib"
-
 New-Item -ItemType Directory -Force -Path "$TargetDir\lib-windows-x86-64" | Out-Null
-Move-Item "$TargetDir\lib\libfmt.a" "$TargetDir\lib-windows-x86-64\libfmt.a" -Force
+Move-Item "$TargetDir\lib\libfmt.lib" "$TargetDir\lib-windows-x86-64\libfmt.lib" -Force
 
 Write-Section "Packaging"
 
