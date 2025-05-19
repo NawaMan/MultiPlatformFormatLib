@@ -26,7 +26,8 @@ OUTPUT_UNIVERSAL="./${OUTPUT_NAME}"
 pwd
 ls -la "$BUILD_DIR"
 
-COMMON_FLAGS="-std=c++23 -I$BUILD_DIR/include -L$BUILD_DIR/lib -lfmt -O2 -flto -ffunction-sections -fdata-sections"
+# COMMON_FLAGS="-std=c++23 -I$BUILD_DIR/include -L$BUILD_DIR/lib -lfmt -O2 -flto -ffunction-sections -fdata-sections"
+COMMON_FLAGS="-std=c++23 -I$BUILD_DIR/include -L$BUILD_DIR/lib -lfmt -O2 -ffunction-sections -fdata-sections"
 LINK_FLAGS="-Wl,-dead_strip"
 
 export CXX=$(brew --prefix llvm@20)/bin/clang++
