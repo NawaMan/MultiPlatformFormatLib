@@ -55,7 +55,8 @@ for ARCH in "${ARCHS[@]}"; do
     export CC=clang
     export CXX=clang++
 
-    OPT_FLAGS="-O2 -flto -ffunction-sections -fdata-sections -fPIC -arch $ARCH"
+# OPT_FLAGS="-O2 -flto -ffunction-sections -fdata-sections -fPIC -arch $ARCH"
+    OPT_FLAGS="-O2 -ffunction-sections -fdata-sections -fPIC -arch $ARCH"
     LINK_FLAGS="-Wl,-dead_strip"
 
     mkdir -p "$BUILD_SUBDIR"
@@ -93,15 +94,6 @@ cp "$PROJECT_DIR/version.txt"  "$UNIVERSAL_TARGET_DIR"
 cp "$PROJECT_DIR/versions.env" "$UNIVERSAL_TARGET_DIR"
 cp "$PROJECT_DIR/LICENSE"      "$UNIVERSAL_TARGET_DIR"
 cp "$PROJECT_DIR/README.md"    "$UNIVERSAL_TARGET_DIR"
-
-echo "UNIVERSAL_TARGET_DIR : $UNIVERSAL_TARGET_DIR"
-ls -la "$UNIVERSAL_TARGET_DIR"
-
-echo "UNIVERSAL_TARGET_DIR / include : $UNIVERSAL_TARGET_DIR/include"
-ls -la "$UNIVERSAL_TARGET_DIR/include"
-
-echo "UNIVERSAL_TARGET_DIR / include / fmt : $UNIVERSAL_TARGET_DIR/include/fmt"
-ls -la "$UNIVERSAL_TARGET_DIR/include/fmt"
 
 "$PROJECT_DIR/write-build-metadata.sh" \
     "$UNIVERSAL_TARGET_DIR"            \
