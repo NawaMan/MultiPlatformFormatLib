@@ -34,7 +34,8 @@ $CompileArgs = @(
     "-I$IncludeDir",
     "-o", $OutputExe,
     "--target=x86_64-windows",
-    "-L$LibDir", "-lfmt"
+    "-L$LibDir\windows-x86-64", 
+    "-lfmt"
 )
 
 & $Compiler @CompileArgs

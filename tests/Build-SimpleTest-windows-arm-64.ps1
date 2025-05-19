@@ -11,7 +11,6 @@ if (-not $DistFile -or -not (Test-Path $DistFile)) {
 }
 
 $BuildDir = "$PWD\build"
-$DistDir  = Split-Path $DistFile
 
 # Clean and extract
 Remove-Item -Recurse -Force $BuildDir -ErrorAction SilentlyContinue
@@ -34,7 +33,8 @@ $CompileArgs = @(
     "-I$IncludeDir",
     "-o", $OutputExe,
     "--target=arm64-windows",
-    "-L$LibDir", "-lfmt"
+    "-L$LibDir\windows-arm64", 
+    "-lfmt"
 )
 
 & $Compiler @CompileArgs

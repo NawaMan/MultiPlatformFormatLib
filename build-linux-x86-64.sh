@@ -65,6 +65,9 @@ cmake ..                                 \
 make -j$(nproc) >> "$BUILD_LOG" 2>&1
 make install    >> "$BUILD_LOG" 2>&1
 
+# Rename the static library
+mv "$TARGET_DIR/lib/libfmt.a" "$TARGET_DIR/lib-linux-x86-64/libfmt.a"
+
 print_section "Packaging..."
 mkdir -p "$DIST_DIR"
 BUILD_ZIP="$DIST_DIR/fmt-${FMT_VERSION}_linux-x86-64_clang-${CLANG_VERSION}.zip"

@@ -75,6 +75,9 @@ cmake .. `
 cmake --build . --config Release --parallel *> $BuildLog 2>&1
 cmake --install . *> $BuildLog 2>&1
 
+# Rename the static library
+Move-Item "$TargetDir\lib\libfmt.a" "$TargetDir\lib-windows-arm-64\libfmt.a" -Force
+
 Write-Section "Packaging"
 
 New-Item -ItemType Directory -Force -Path $DistDir | Out-Null
