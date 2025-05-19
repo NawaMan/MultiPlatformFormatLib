@@ -36,10 +36,14 @@ LINK_FLAGS="-Wl,-dead_strip"
 $CXX -arch x86_64 $COMMON_FLAGS_X86 $LINK_FLAGS simple-test.cpp -o "$OUTPUT_X86"
 $CXX -arch arm64  $COMMON_FLAGS_ARM $LINK_FLAGS simple-test.cpp -o "$OUTPUT_ARM"
 
-lipo -create -output simple-test $OUTPUT_X86 $OUTPUT_ARM
-
 echo "Creating universal binary with lipo..."
 lipo -create -output "$OUTPUT_UNIVERSAL" "$OUTPUT_X86" "$OUTPUT_ARM"
+
+echo "BUILD_DIR: $BUILD_DIR"
+ls -la "$BUILD_DIR"
+
+echo "OUTPUT_UNIVERSAL: $OUTPUT_UNIVERSAL"
+ls -la "$OUTPUT_UNIVERSAL"
 
 echo ""
 echo "✅ Success!"

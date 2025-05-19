@@ -445,6 +445,9 @@ jobs:
         with:
           name: fmt-macos-universal-test
 
+      - name: Make test executable
+        run: chmod +x simple-test
+
       - name: Run test
         run: ./simple-test
         shell: bash
