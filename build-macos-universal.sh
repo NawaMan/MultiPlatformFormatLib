@@ -90,9 +90,6 @@ print_section "Packaging..."
 mkdir -p "$DIST_DIR"
 BUILD_ZIP="$DIST_DIR/fmt-${FMT_VERSION}_macos-universal_clang-${CLANG_VERSION}.zip"
 
-# Rename the static library
-mv "$TARGET_DIR/lib/libfmt.a" "$TARGET_DIR/lib/libfmt-macos-universal.a"
-
 cp -R "$SOURCE_DIR/include"    "$UNIVERSAL_TARGET_DIR"
 cp "$PROJECT_DIR/version.txt"  "$UNIVERSAL_TARGET_DIR"
 cp "$PROJECT_DIR/versions.env" "$UNIVERSAL_TARGET_DIR"
