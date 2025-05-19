@@ -20,7 +20,7 @@ echo "BUILD_DIR: $BUILD_DIR"
 
 OUTPUT_NAME=simple-test
 OUTPUT_X86="$BUILD_DIR/${OUTPUT_NAME}_x86_64"
-OUTPUT_ARM="$BUILD_DIR/${OUTPUT_NAME}_arm64"
+OUTPUT_ARM="$BUILD_DIR/${OUTPUT_NAME}_arm_64"
 OUTPUT_UNIVERSAL="./${OUTPUT_NAME}"
 
 # ✅ Use Apple Clang
@@ -29,11 +29,14 @@ export CXX=/usr/bin/clang++
 # ✅ Use macOS SDK
 SDKROOT=$(xcrun --sdk macosx --show-sdk-path)
 
-COMMON_FLAGS="-std=c++2b -isysroot $SDKROOT -I$BUILD_DIR/include -L$BUILD_DIR/lib -lfmt -O2 -ffunction-sections -fdata-sections"
+COMMON_FLAGS_X86="-std=c++2b -isysroot $SDKROOT -I$BUILD_DIR/include -L$BUILD_DIR/lib -lfmt -O2 -ffunction-sections -fdata-sections"
+COMMON_FLAGS_ARM="-std=c++2b -isysroot $SDKROOT -I$BUILD_DIR/include -L$BUILD_DIR/lib -lfmt -O2 -ffunction-sections -fdata-sections"
 LINK_FLAGS="-Wl,-dead_strip"
 
-$CXX -arch x86_64 $COMMON_FLAGS $LINK_FLAGS simple-test.cpp -o "$OUTPUT_X86"
-$CXX -arch arm64  $COMMON_FLAGS $LINK_FLAGS simple-test.cpp -o "$OUTPUT_ARM"
+$CXX -arch x86_64 $COMMON_FLAGS_X86 $LINK_FLAGS simple-test.cpp -o "$OUTPUT_X86"
+$CXX -arch arm64  $COMMON_FLAGS_ARM $LINK_FLAGS simple-test.cpp -o "$OUTPUT_ARM"
+
+lipo -create -output simple-test $OUTPUT_X86 $OUTPUT_ARM
 
 echo "Creating universal binary with lipo..."
 lipo -create -output "$OUTPUT_UNIVERSAL" "$OUTPUT_X86" "$OUTPUT_ARM"

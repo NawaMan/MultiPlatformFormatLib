@@ -434,3 +434,17 @@ jobs:
           if-no-files-found: error
           retention-days: 1
 
+  run-test-macos-universal:
+    name: Run Test (macOS Universal)
+    needs: build-test-macos-universal
+    runs-on: macos-13
+
+    steps:
+      - name: Download test binary
+        uses: actions/download-artifact@v4
+        with:
+          name: fmt-macos-universal-test
+
+      - name: Run test
+        run: ./simple-test
+        shell: bash
