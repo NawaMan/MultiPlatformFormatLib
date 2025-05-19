@@ -16,14 +16,17 @@ source versions.env
 source sh-sources/common-source.sh
 source sh-sources/src-common.sh
 
+# 👇 Explicitly use Apple Clang
+export CC=/usr/bin/clang
+export CXX=/usr/bin/clang++
 
-print "Clang       version: $(clang       --version)"
-print "Clang++     version: $(clang++     --version)"
+print "Clang       version: $($CC       --version)"
+print "Clang++     version: $($CXX      --version)"
 print "LLVM-ar     version: $(llvm-ar     --version)"
 print "LLVM-ranlib version: $(llvm-ranlib --version)"
 
 print_section "Check compiler version"
-ACTUAL_CLANG_VERSION=$(clang --version | grep -o 'clang version [0-9]\+' | awk '{print $3}')
+ACTUAL_CLANG_VERSION=$($CC --version | grep -o 'Apple clang version [0-9]\+' | awk '{print $4}')
 if [[ $BUILD_CLANG == "true" && $IGNORE_COMPILER_VERSION -eq 0 ]]; then
   if [[ "${ACTUAL_CLANG_VERSION%%.*}" != "$CLANG_VERSION" ]]; then
     exit_with_error "Clang version $CLANG_VERSION.x required, found $ACTUAL_CLANG_VERSION."
@@ -31,7 +34,6 @@ if [[ $BUILD_CLANG == "true" && $IGNORE_COMPILER_VERSION -eq 0 ]]; then
 fi
 
 print_status "Clang version: $ACTUAL_CLANG_VERSION"
-
 
 print_section "Downloading Source ${FMT_VERSION}"
 ./prepare-src.sh "$BUILD_DIR"
@@ -52,11 +54,10 @@ for ARCH in "${ARCHS[@]}"; do
     TARGET_DIR="$BUILD_DIR/fmt-target-$ARCH"
     BUILD_SUBDIR="$SOURCE_DIR/build-$ARCH"
 
-    export CC=clang
-    export CXX=clang++
+    # ✅ Use macOS SDK for each arch
+    SDKROOT=$(xcrun --sdk macosx --show-sdk-path)
 
-# OPT_FLAGS="-O2 -flto -ffunction-sections -fdata-sections -fPIC -arch $ARCH"
-    OPT_FLAGS="-O2 -ffunction-sections -fdata-sections -fPIC -arch $ARCH"
+    OPT_FLAGS="-O2 -ffunction-sections -fdata-sections -fPIC -arch $ARCH -isysroot $SDKROOT"
     LINK_FLAGS="-Wl,-dead_strip"
 
     mkdir -p "$BUILD_SUBDIR"
@@ -89,6 +90,9 @@ print_section "Packaging..."
 mkdir -p "$DIST_DIR"
 BUILD_ZIP="$DIST_DIR/fmt-${FMT_VERSION}_macos-universal_clang-${CLANG_VERSION}.zip"
 
+# Rename the static library
+mv "$TARGET_DIR/lib/libfmt.a" "$TARGET_DIR/lib/libfmt-macos-universal.a"
+
 cp -R "$SOURCE_DIR/include"    "$UNIVERSAL_TARGET_DIR"
 cp "$PROJECT_DIR/version.txt"  "$UNIVERSAL_TARGET_DIR"
 cp "$PROJECT_DIR/versions.env" "$UNIVERSAL_TARGET_DIR"
@@ -97,7 +101,7 @@ cp "$PROJECT_DIR/README.md"    "$UNIVERSAL_TARGET_DIR"
 
 "$PROJECT_DIR/write-build-metadata.sh" \
     "$UNIVERSAL_TARGET_DIR"            \
-    "Clang"                            \
+    "Apple Clang"                      \
     "$ACTUAL_CLANG_VERSION"            \
     "macOS"                            \
     "universal"                        \
