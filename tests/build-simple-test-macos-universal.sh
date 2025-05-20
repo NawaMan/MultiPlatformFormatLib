@@ -16,7 +16,6 @@ mkdir -p "$BUILD_DIR"
 unzip "$DIST_FILE" -d "$BUILD_DIR"
 
 echo "Compiling for macOS Universal (x86_64 + arm64)..."
-echo "BUILD_DIR: $BUILD_DIR"
 
 OUTPUT_NAME=simple-test
 OUTPUT_X86="$BUILD_DIR/${OUTPUT_NAME}_x86_64"
@@ -29,16 +28,14 @@ export CXX=/usr/bin/clang++
 # ✅ Use macOS SDK
 SDKROOT=$(xcrun --sdk macosx --show-sdk-path)
 
-echo "BUILD_DIR: $BUILD_DIR"
-ls -la "$BUILD_DIR"
-ls -la "$BUILD_DIR/lib-macos-universal"
-
 # Can't use -flto so not sure how much inefficient use of space this is
 COMMON_FLAGS="-std=c++2b -isysroot $SDKROOT -I$BUILD_DIR/include -L$BUILD_DIR/lib-macos-universal -lfmt -O2 -ffunction-sections -fdata-sections"
 LINK_FLAGS="-Wl,-dead_strip"
 
 $CXX -arch x86_64 $COMMON_FLAGS $LINK_FLAGS simple-test.cpp -o "$OUTPUT_X86"
 $CXX -arch arm64  $COMMON_FLAGS $LINK_FLAGS simple-test.cpp -o "$OUTPUT_ARM"
+
+lipo -create -output "$OUTPUT_UNIVERSAL" "$OUTPUT_X86" "$OUTPUT_ARM"
 
 echo ""
 echo "✅ Success!"
