@@ -91,14 +91,15 @@ mkdir -p "$DIST_DIR"
 BUILD_ZIP="$DIST_DIR/fmt-${FMT_VERSION}_macos-universal_clang-${CLANG_VERSION}.zip"
 
 # Rename the static library
-mkdir -p "$UNIVERSAL_TARGET_DIR/lib-macos-universal"
-mv "$UNIVERSAL_TARGET_DIR/lib/libfmt.a" "$UNIVERSAL_TARGET_DIR/lib-macos-universal/libfmt.a"
+mkdir -p  "$UNIVERSAL_TARGET_DIR/lib-macos-universal"
+mv        "$UNIVERSAL_TARGET_DIR/lib/libfmt.a"         "$UNIVERSAL_TARGET_DIR/lib-macos-universal/libfmt.a"
+rm    -Rf "$UNIVERSAL_TARGET_DIR/lib"
 
-cp -R "$SOURCE_DIR/include"    "$UNIVERSAL_TARGET_DIR"
-cp "$PROJECT_DIR/version.txt"  "$UNIVERSAL_TARGET_DIR"
-cp "$PROJECT_DIR/versions.env" "$UNIVERSAL_TARGET_DIR"
-cp "$PROJECT_DIR/LICENSE"      "$UNIVERSAL_TARGET_DIR"
-cp "$PROJECT_DIR/README.md"    "$UNIVERSAL_TARGET_DIR"
+cp -R "$SOURCE_DIR/include"       "$UNIVERSAL_TARGET_DIR"
+cp    "$PROJECT_DIR/version.txt"  "$UNIVERSAL_TARGET_DIR"
+cp    "$PROJECT_DIR/versions.env" "$UNIVERSAL_TARGET_DIR"
+cp    "$PROJECT_DIR/LICENSE"      "$UNIVERSAL_TARGET_DIR"
+cp    "$PROJECT_DIR/README.md"    "$UNIVERSAL_TARGET_DIR"
 
 "$PROJECT_DIR/write-build-metadata.sh" \
     "$UNIVERSAL_TARGET_DIR"            \
@@ -110,6 +111,9 @@ cp "$PROJECT_DIR/README.md"    "$UNIVERSAL_TARGET_DIR"
     "$LINK_FLAGS"
 
 cd "$UNIVERSAL_TARGET_DIR"
+pwd
+tree
+
 zip -r "$BUILD_ZIP" . >> "$BUILD_LOG"
 chmod 777 "$BUILD_ZIP"
 

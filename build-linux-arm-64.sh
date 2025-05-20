@@ -88,6 +88,9 @@ cp "$PROJECT_DIR/README.md"    "$TARGET_DIR"
     "$LINK_FLAGS"
 
 cd "$TARGET_DIR"
+pwd
+tree
+
 zip -r "$BUILD_ZIP" . >> "$BUILD_LOG"
 chmod 777 "$BUILD_ZIP"
 

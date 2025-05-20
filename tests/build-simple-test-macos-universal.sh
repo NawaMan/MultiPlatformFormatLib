@@ -32,10 +32,10 @@ SDKROOT=$(xcrun --sdk macosx --show-sdk-path)
 echo "BUILD_DIR: $BUILD_DIR"
 ls -la "$BUILD_DIR"
 ls -la "$BUILD_DIR/lib"
-ls -la "$BUILD_DIR/lib/lib-macos-universal"
+ls -la "$BUILD_DIR/lib-macos-universal"
 
 # Can't use -flto so not sure how much inefficient use of space this is
-COMMON_FLAGS="-std=c++2b -isysroot $SDKROOT -I$BUILD_DIR/include -L$BUILD_DIR/lib/lib-macos-universal -lfmt -O2 -ffunction-sections -fdata-sections"
+COMMON_FLAGS="-std=c++2b -isysroot $SDKROOT -I$BUILD_DIR/include -L$BUILD_DIR/lib-macos-universal -lfmt -O2 -ffunction-sections -fdata-sections"
 LINK_FLAGS="-Wl,-dead_strip"
 
 $CXX -arch x86_64 $COMMON_FLAGS $LINK_FLAGS simple-test.cpp -o "$OUTPUT_X86"

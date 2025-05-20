@@ -101,8 +101,14 @@ Write-BuildMetadata `
     -LinkFlags $LinkFlags
 
 Set-Location $TargetDir
+Write-Output "Current Directory:"
+Get-Location
+Write-Output "Directory Structure:"
+Get-ChildItem -Recurse | Format-Table -Property Mode,Length,Name -AutoSize
+
 Compress-Archive -Path * -DestinationPath $BuildZip -Force
 Set-ItemProperty -Path $BuildZip -Name Attributes -Value 'Normal'
+
 
 if (Test-Path $BuildZip) {
     Write-Status "Build succeeded!"
