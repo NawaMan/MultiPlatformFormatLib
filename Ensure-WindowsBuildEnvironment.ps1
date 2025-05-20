@@ -45,6 +45,22 @@ try {
     winget install -e --id 7zip.7zip --accept-source-agreements --accept-package-agreements
 }
 
+# Ensure Ninja is available (for building)
+try {
+    $ninjaPath = (Get-Command ninja -ErrorAction SilentlyContinue).Source
+    if ($ninjaPath) {
+        Write-Host "Ninja found at: $ninjaPath"
+    } else {
+        Write-Host "Ninja not found. Installing..."
+        # Install Ninja using winget
+        winget install -e --id Ninja.Ninja --accept-source-agreements --accept-package-agreements
+    }
+} catch {
+    Write-Host "Ninja not found. Installing..."
+    # Install Ninja using winget
+    winget install -e --id Ninja.Ninja --accept-source-agreements --accept-package-agreements
+}
+
 # Now run the LLVM setup script
 Write-Section "Setting up LLVM/Clang"
 & "$ScriptPath\Ensure-WindowsLlvmSetup.ps1"

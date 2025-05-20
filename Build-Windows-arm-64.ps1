@@ -100,14 +100,15 @@ $env:LDFLAGS  = $LinkFlags
 New-Item -ItemType Directory -Force -Path "$SourceDir\build" | Out-Null
 Set-Location "$SourceDir\build"
 
-cmake .. `
+cmake ..                                         `
+    -G "Ninja"                                   `
     -DCMAKE_BUILD_TYPE=Release                   `
     -DCMAKE_INSTALL_PREFIX="$TargetDir"          `
     -DFMT_DOC=OFF                                `
     -DFMT_TEST=OFF                               `
     -DFMT_INSTALL=ON                             `
     -DBUILD_SHARED_LIBS=OFF                      `
-    -DCMAKE_MSVC_RUNTIME_LIBRARY="MultiThreaded" `
+                                                 `
     -DCMAKE_SYSTEM_NAME="Windows"                `
     -DCMAKE_SYSTEM_PROCESSOR="ARM64"             `
     -DCMAKE_C_COMPILER="clang"                   `
@@ -118,6 +119,11 @@ cmake .. `
 
 cmake --build . --config Release --parallel *> $BuildLog 2>&1
 cmake --install . *> $BuildLog 2>&1
+
+# Rename the static library
+Write-Output "TargetDir: $TargetDir"
+Get-ChildItem "$TargetDir"
+Get-ChildItem "$TargetDir\lib"
 
 # Rename the static library
 New-Item -ItemType Directory -Force -Path "$TargetDir\lib-windows-arm-64" | Out-Null
