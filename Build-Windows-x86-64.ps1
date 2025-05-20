@@ -123,6 +123,8 @@ cmake --install . *> $BuildLog 2>&1
 New-Item -ItemType Directory -Force -Path "$TargetDir\lib-windows-x86-64" | Out-Null
 Move-Item "$TargetDir\lib\fmt.lib" "$TargetDir\lib-windows-x86-64\fmt.lib" -Force
 
+& llvm-readobj --file-headers "$TargetDir\lib-windows-x86-64\fmt.lib"
+
 # Remove the lib directory as it's no longer needed
 Remove-Item -Path "$TargetDir\lib" -Recurse -Force
 
@@ -157,7 +159,7 @@ Set-Location $TargetDir
 Write-Output "Current Directory:"
 Get-Location
 Write-Output "Directory Structure:"
-Get-ChildItem -Recurse | Format-Table -Property Mode,Length,Name -AutoSize
+cmd.exe /c tree /F /A
 
 Compress-Archive -Path * -DestinationPath $BuildZip -Force
 Set-ItemProperty -Path $BuildZip -Name Attributes -Value 'Normal'  # Ensure readable by others

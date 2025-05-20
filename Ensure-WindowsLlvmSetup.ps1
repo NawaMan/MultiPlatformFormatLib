@@ -122,6 +122,8 @@ Write-Host "llvm-ar path    : " -NoNewline
 Write-Host (Get-Command llvm-ar -ErrorAction SilentlyContinue).Source
 Write-Host "llvm-ranlib path: " -NoNewline
 Write-Host (Get-Command llvm-ranlib -ErrorAction SilentlyContinue).Source
+Write-Host "llvm-readobj path: " -NoNewline
+Write-Host (Get-Command llvm-readobj -ErrorAction SilentlyContinue).Source
 Write-Host ""
 
 Write-Host "Clang       version: " -NoNewline
