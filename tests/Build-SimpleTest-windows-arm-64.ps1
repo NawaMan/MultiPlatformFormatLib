@@ -21,19 +21,19 @@ Write-Host "`nCompiling..."
 Write-Host "BUILD_DIR: $BuildDir"
 
 $IncludeDir = "$BuildDir\include"
-$LibDir     = "$BuildDir\lib"
+$LibDir     = "$BuildDir\lib-windows-arm-64"
 $OutputExe  = "$PWD\simple-test-arm-64.exe"
 $Compiler   = "clang++"
 
 $CompileArgs = @(
-    "simple-test.cpp",
-    "-std=c++23",
-    "-O2",
+    "simple-test.cpp"          ,
+    "-std=c++23"               ,
+    "-O2"                      ,
     "-D_CRT_SECURE_NO_WARNINGS",
-    "-I$IncludeDir",
-    "-o", $OutputExe,
-    "--target=arm64-windows",
-    "-L$LibDir\lib-windows-arm-64", 
+    "-I$IncludeDir"            ,
+    "-o", $OutputExe           ,
+    "--target=arm64-windows"   ,
+    "-L$LibDir"                ,
     "-lfmt"
 )
 

@@ -85,10 +85,10 @@ Write-Section "Downloading Source $env:FMT_VERSION"
 
 Write-Section "Building fmt for Windows ARM-64"
 
-$SourceDir = "$BuildDir\fmt-source\fmt-$env:FMT_VERSION"
-$TargetDir = "$BuildDir\fmt-target"
-$OptFlags = "-O2 -flto -ffunction-sections -fdata-sections -fPIC"
-$LinkFlags = "-Wl,--gc-sections"
+$SourceDir    = "$BuildDir\fmt-source\fmt-$env:FMT_VERSION"
+$TargetDir    = "$BuildDir\fmt-target"
+$OptFlags     = "-O2 -flto -ffunction-sections -fdata-sections -fPIC"
+$LinkFlags    = "-Wl,--gc-sections"
 $TargetTriple = "aarch64-pc-windows-msvc"
 
 $env:CC       = "clang --target=$TargetTriple"
@@ -119,21 +119,17 @@ cmake .. `
 cmake --build . --config Release --parallel *> $BuildLog 2>&1
 cmake --install . *> $BuildLog 2>&1
 
-Write-Output "TargetDir: $TargetDir"
-Get-ChildItem "$TargetDir"
-Get-ChildItem "$TargetDir\lib"
-
 # Rename the static library
 New-Item -ItemType Directory -Force -Path "$TargetDir\lib-windows-arm-64" | Out-Null
 Move-Item "$TargetDir\lib\fmt.lib" "$TargetDir\lib-windows-arm-64\fmt.lib" -Force
+
+# Remove the lib directory as it's no longer needed
+Remove-Item -Path "$TargetDir\lib" -Recurse -Force
 
 # Rename the static library
 Write-Output "TargetDir: $TargetDir"
 Get-ChildItem "$TargetDir"
 Get-ChildItem "$TargetDir\lib-windows-arm-64"
-
-# Remove the lib directory as it's no longer needed
-Remove-Item -Path "$TargetDir\lib" -Recurse -Force
 
 Write-Section "Packaging"
 

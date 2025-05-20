@@ -85,14 +85,14 @@ Write-Section "Downloading Source $env:FMT_VERSION"
 
 Write-Section "Building fmt for Windows x86-64"
 
-$SourceDir = "$BuildDir\fmt-source\fmt-$env:FMT_VERSION"
-$TargetDir = "$BuildDir\fmt-target"
-$OptFlags = "-O2 -flto -ffunction-sections -fdata-sections -fPIC"
-$LinkFlags = "-Wl,--gc-sections"
+$SourceDir    = "$BuildDir\fmt-source\fmt-$env:FMT_VERSION"
+$TargetDir    = "$BuildDir\fmt-target"
+$OptFlags     = "-O2 -flto -ffunction-sections -fdata-sections -fPIC"
+$LinkFlags    = "-Wl,--gc-sections"
 $TargetTriple = "x86_64-pc-windows-msvc"
 
-$env:CC       = "clang"
-$env:CXX      = "clang++"
+$env:CC       = "clang --target=$TargetTriple"
+$env:CXX      = "clang++ --target=$TargetTriple"
 $env:CFLAGS   = $OptFlags
 $env:CXXFLAGS = $OptFlags
 $env:LDFLAGS  = $LinkFlags
@@ -108,7 +108,7 @@ cmake .. `
     -DFMT_INSTALL=ON                             `
     -DBUILD_SHARED_LIBS=OFF                      `
     -DCMAKE_MSVC_RUNTIME_LIBRARY="MultiThreaded" `
-    -DCMAKE_SYSTEM_NAME="Windows" `
+    -DCMAKE_SYSTEM_NAME="Windows"                `
     -DCMAKE_SYSTEM_PROCESSOR="X86"               `
     -DCMAKE_C_COMPILER="clang"                   `
     -DCMAKE_CXX_COMPILER="clang++"               `
@@ -119,21 +119,17 @@ cmake .. `
 cmake --build . --config Release --parallel *> $BuildLog 2>&1
 cmake --install . *> $BuildLog 2>&1
 
-Write-Output "TargetDir: $TargetDir"
-Get-ChildItem "$TargetDir"
-Get-ChildItem "$TargetDir\lib"
-
 # Rename the static library
 New-Item -ItemType Directory -Force -Path "$TargetDir\lib-windows-x86-64" | Out-Null
 Move-Item "$TargetDir\lib\fmt.lib" "$TargetDir\lib-windows-x86-64\fmt.lib" -Force
+
+# Remove the lib directory as it's no longer needed
+Remove-Item -Path "$TargetDir\lib" -Recurse -Force
 
 # Rename the static library
 Write-Output "TargetDir: $TargetDir"
 Get-ChildItem "$TargetDir"
 Get-ChildItem "$TargetDir\lib-windows-x86-64"
-
-# Remove the lib directory as it's no longer needed
-Remove-Item -Path "$TargetDir\lib" -Recurse -Force
 
 Write-Section "Packaging"
 

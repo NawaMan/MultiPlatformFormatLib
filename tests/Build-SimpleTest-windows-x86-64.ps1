@@ -11,7 +11,6 @@ if (-not $DistFile -or -not (Test-Path $DistFile)) {
 }
 
 $BuildDir = "$PWD\build"
-$DistDir  = Split-Path $DistFile
 
 # Clean and extract
 Remove-Item -Recurse -Force $BuildDir -ErrorAction SilentlyContinue
@@ -22,19 +21,19 @@ Write-Host "`nCompiling..."
 Write-Host "BUILD_DIR: $BuildDir"
 
 $IncludeDir = "$BuildDir\include"
-$LibDir     = "$BuildDir\lib"
+$LibDir     = "$BuildDir\lib-windows-x86-64"
 $OutputExe  = "$PWD\simple-test-x86-64.exe"
 $Compiler   = "clang++"
 
 $CompileArgs = @(
-    "simple-test.cpp",
-    "-std=c++23",
-    "-O2",
+    "simple-test.cpp"          ,
+    "-std=c++23"               ,
+    "-O2"                      ,
     "-D_CRT_SECURE_NO_WARNINGS",
-    "-I$IncludeDir",
-    "-o", $OutputExe,
-    "--target=x86_64-windows",
-    "-L$LibDir\lib-windows-x86-64", 
+    "-I$IncludeDir"            ,
+    "-o", $OutputExe           ,
+    "--target=x86_64-windows"  ,
+    "-L$LibDir"                ,
     "-lfmt"
 )
 
