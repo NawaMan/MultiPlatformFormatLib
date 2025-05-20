@@ -11,6 +11,7 @@ apt-get install -y             \
     lsb-release                \
     pkg-config                 \
     software-properties-common \
+    tree                       \
     unzip                      \
     wget                       \
     zip                        \

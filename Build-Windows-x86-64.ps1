@@ -120,7 +120,7 @@ Get-ChildItem "$TargetDir\lib"
 # D:\a\MultiPlatformFormatLib\MultiPlatformFormatLib\build\build-windows-x86-64\fmt-target\lib\libfmt.lib
 
 New-Item -ItemType Directory -Force -Path "$TargetDir\lib-windows-x86-64" | Out-Null
-Move-Item "$TargetDir\lib\libfmt.lib" "$TargetDir\lib-windows-x86-64\libfmt.lib" -Force
+Move-Item "$TargetDir\lib\fmt.lib" "$TargetDir\lib-windows-x86-64\fmt.lib" -Force
 
 Write-Section "Packaging"
 

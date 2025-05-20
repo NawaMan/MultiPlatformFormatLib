@@ -23,7 +23,14 @@ brew update > /dev/null
 
 print_status "Installing packages..."
 
-brew install -q cmake pkg-config curl unzip wget zip \
+brew install -q \
+    cmake       \
+    curl        \
+    pkg-config  \
+    tree        \
+    unzip       \
+    wget        \
+    zip         \
     2>&1 | grep -E 'Already installed|Installing|Pouring'
 
 # Call LLVM setup (in a separate script)
