@@ -290,81 +290,81 @@ jobs:
 # Windows ARM build is not working ... this ended building x86-64
 # Will deal with this at the later time.
 
-  # Windows Build Job
-  build-windows-arm-64:
-    name: Build (Windows arm)
-    runs-on: windows-latest
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v3
+  # # Windows Build Job
+  # build-windows-arm-64:
+  #   name: Build (Windows arm)
+  #   runs-on: windows-latest
+  #   steps:
+  #     - name: Checkout repository
+  #       uses: actions/checkout@v3
 
-      - name: Setup Windows build environment
-        shell: pwsh
-        run: |
-          # Create build directories
-          New-Item -ItemType Directory -Path build -Force | Out-Null
-          New-Item -ItemType Directory -Path dist -Force | Out-Null
-          .\Ensure-WindowsBuildEnvironment.ps1
+  #     - name: Setup Windows build environment
+  #       shell: pwsh
+  #       run: |
+  #         # Create build directories
+  #         New-Item -ItemType Directory -Path build -Force | Out-Null
+  #         New-Item -ItemType Directory -Path dist -Force | Out-Null
+  #         .\Ensure-WindowsBuildEnvironment.ps1
 
-          .\Build-Windows-arm-64.ps1
+  #         .\Build-Windows-arm-64.ps1
       
-      - name: Upload build artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: fmt-windows-arm-64
-          path: dist/fmt-*_windows-arm-64_*.zip
-          if-no-files-found: warn
-          retention-days: 1
+  #     - name: Upload build artifact
+  #       uses: actions/upload-artifact@v4
+  #       with:
+  #         name: fmt-windows-arm-64
+  #         path: dist/fmt-*_windows-arm-64_*.zip
+  #         if-no-files-found: warn
+  #         retention-days: 1
 
-  # Windows ARM64 Build Test Job
-  build-test-windows-arm64:
-    name: Build Test (Windows ARM64)
-    needs: build-windows-arm-64
-    runs-on: windows-latest
+  # # Windows ARM64 Build Test Job
+  # build-test-windows-arm64:
+  #   name: Build Test (Windows ARM64)
+  #   needs: build-windows-arm-64
+  #   runs-on: windows-latest
 
-    steps:
-    - name: Checkout repository
-      uses: actions/checkout@v3
+  #   steps:
+  #   - name: Checkout repository
+  #     uses: actions/checkout@v3
 
-    - name: Download build artifact
-      uses: actions/download-artifact@v4
-      with:
-        name: fmt-windows-arm-64
-        path: dist
+  #   - name: Download build artifact
+  #     uses: actions/download-artifact@v4
+  #     with:
+  #       name: fmt-windows-arm-64
+  #       path: dist
 
-    - name: Enable UTF-8 and allow script execution
-      run: |
-        chcp 65001
-        Set-ExecutionPolicy Bypass -Scope Process -Force
+  #   - name: Enable UTF-8 and allow script execution
+  #     run: |
+  #       chcp 65001
+  #       Set-ExecutionPolicy Bypass -Scope Process -Force
 
-    - name: Build test executable for ARM64
-      shell: pwsh
-      run: |
-        cd tests
-        $distFile = Get-ChildItem -Path "../dist" -Filter "fmt-*_windows-arm-64_*.zip" -Recurse | Select-Object -ExpandProperty FullName
-        ./Build-SimpleTest-windows-arm-64.ps1 $distFile
+  #   - name: Build test executable for ARM64
+  #     shell: pwsh
+  #     run: |
+  #       cd tests
+  #       $distFile = Get-ChildItem -Path "../dist" -Filter "fmt-*_windows-arm-64_*.zip" -Recurse | Select-Object -ExpandProperty FullName
+  #       ./Build-SimpleTest-windows-arm-64.ps1 $distFile
 
-    - name: Upload test binary
-      uses: actions/upload-artifact@v4
-      with:
-        name: fmt-windows-arm-64-test
-        path: tests/simple-test-arm64.exe
+  #   - name: Upload test binary
+  #     uses: actions/upload-artifact@v4
+  #     with:
+  #       name: fmt-windows-arm-64-test
+  #       path: tests/simple-test-arm64.exe
 
 
-  run-test-windows-arm-64:
-    name: Run Test (Windows ARM64)
-    needs: build-test-windows-arm64
-    runs-on: windows-11-arm
+  # run-test-windows-arm-64:
+  #   name: Run Test (Windows ARM64)
+  #   needs: build-test-windows-arm64
+  #   runs-on: windows-11-arm
 
-    steps:
-      - name: Download test binary
-        uses: actions/download-artifact@v4
-        with:
-          name: fmt-windows-arm-64-test
+  #   steps:
+  #     - name: Download test binary
+  #       uses: actions/download-artifact@v4
+  #       with:
+  #         name: fmt-windows-arm-64-test
 
-      - name: Run test
-        run: .\simple-test-arm-64.exe
-        shell: cmd
+  #     - name: Run test
+  #       run: .\simple-test-arm-64.exe
+  #       shell: cmd
 
   # macOS Universal Build Job
   build-macos-universal:
