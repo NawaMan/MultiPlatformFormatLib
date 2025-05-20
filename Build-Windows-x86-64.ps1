@@ -1,4 +1,4 @@
-# Build-Windows-Clang.ps1
+# Build-Windows-x86-64.ps1
 
 param (
     [string]$DistDir = "$PWD\dist"
@@ -15,7 +15,7 @@ $BuildLog = "$BuildDir\build.log"
 . .\ps-sources\Src-Common.ps1
 
 New-Item -ItemType Directory -Force -Path $BuildDir | Out-Null
-New-Item -ItemType File -Force -Path $BuildLog | Out-Null
+New-Item -ItemType File      -Force -Path $BuildLog | Out-Null
 
 # Load environment
 $envLines = (Get-Content .\versions.env -Raw -Encoding UTF8).Replace("`u{FEFF}", "") -split "`n"
@@ -83,12 +83,13 @@ Write-Status "Clang version: $ActualClangVersion"
 Write-Section "Downloading Source $env:FMT_VERSION"
 & .\Prepare-Src.ps1 $BuildDir
 
-Write-Section "Building fmt"
+Write-Section "Building fmt for Windows x86-64"
 
 $SourceDir = "$BuildDir\fmt-source\fmt-$env:FMT_VERSION"
 $TargetDir = "$BuildDir\fmt-target"
 $OptFlags = "-O2 -flto -ffunction-sections -fdata-sections -fPIC"
 $LinkFlags = "-Wl,--gc-sections"
+$TargetTriple = "x86_64-pc-windows-msvc"
 
 $env:CC       = "clang"
 $env:CXX      = "clang++"
@@ -100,27 +101,39 @@ New-Item -ItemType Directory -Force -Path "$SourceDir\build" | Out-Null
 Set-Location "$SourceDir\build"
 
 cmake .. `
-    -DCMAKE_BUILD_TYPE=Release `
-    -DCMAKE_INSTALL_PREFIX="$TargetDir" `
-    -DFMT_DOC=OFF `
-    -DFMT_TEST=OFF `
-    -DFMT_INSTALL=ON `
-    -DBUILD_SHARED_LIBS=OFF `
+    -DCMAKE_BUILD_TYPE=Release                   `
+    -DCMAKE_INSTALL_PREFIX="$TargetDir"          `
+    -DFMT_DOC=OFF                                `
+    -DFMT_TEST=OFF                               `
+    -DFMT_INSTALL=ON                             `
+    -DBUILD_SHARED_LIBS=OFF                      `
     -DCMAKE_MSVC_RUNTIME_LIBRARY="MultiThreaded" `
+    -DCMAKE_SYSTEM_NAME="Windows" `
+    -DCMAKE_SYSTEM_PROCESSOR="X86"               `
+    -DCMAKE_C_COMPILER="clang"                   `
+    -DCMAKE_CXX_COMPILER="clang++"               `
+    -DCMAKE_C_COMPILER_TARGET=$TargetTriple      `
+    -DCMAKE_CXX_COMPILER_TARGET=$TargetTriple    `
     *> $BuildLog 2>&1
 
 cmake --build . --config Release --parallel *> $BuildLog 2>&1
 cmake --install . *> $BuildLog 2>&1
 
-# Rename the static library
 Write-Output "TargetDir: $TargetDir"
 Get-ChildItem "$TargetDir"
 Get-ChildItem "$TargetDir\lib"
 
-# D:\a\MultiPlatformFormatLib\MultiPlatformFormatLib\build\build-windows-x86-64\fmt-target\lib\libfmt.lib
-
+# Rename the static library
 New-Item -ItemType Directory -Force -Path "$TargetDir\lib-windows-x86-64" | Out-Null
 Move-Item "$TargetDir\lib\fmt.lib" "$TargetDir\lib-windows-x86-64\fmt.lib" -Force
+
+# Rename the static library
+Write-Output "TargetDir: $TargetDir"
+Get-ChildItem "$TargetDir"
+Get-ChildItem "$TargetDir\lib-windows-x86-64"
+
+# Remove the lib directory as it's no longer needed
+Remove-Item -Path "$TargetDir\lib" -Recurse -Force
 
 Write-Section "Packaging"
 
@@ -152,6 +165,7 @@ Get-ChildItem -Recurse | Format-Table -Property Mode,Length,Name -AutoSize
 
 Compress-Archive -Path * -DestinationPath $BuildZip -Force
 Set-ItemProperty -Path $BuildZip -Name Attributes -Value 'Normal'  # Ensure readable by others
+
 
 if (Test-Path $BuildZip) {
     Write-Status "Build succeeded!"

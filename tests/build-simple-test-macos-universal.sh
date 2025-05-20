@@ -31,7 +31,6 @@ SDKROOT=$(xcrun --sdk macosx --show-sdk-path)
 
 echo "BUILD_DIR: $BUILD_DIR"
 ls -la "$BUILD_DIR"
-ls -la "$BUILD_DIR/lib"
 ls -la "$BUILD_DIR/lib-macos-universal"
 
 # Can't use -flto so not sure how much inefficient use of space this is
