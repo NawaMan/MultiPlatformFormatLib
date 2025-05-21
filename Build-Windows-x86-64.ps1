@@ -110,7 +110,7 @@ cmake ..                                         `
     -DBUILD_SHARED_LIBS=OFF                      `
     -DCMAKE_MSVC_RUNTIME_LIBRARY="MultiThreaded" `
     -DCMAKE_SYSTEM_NAME="Windows"                `
-    -DCMAKE_SYSTEM_PROCESSOR="X86"               `
+    -DCMAKE_SYSTEM_PROCESSOR="x86_64"            `
     -DCMAKE_C_COMPILER="clang"                   `
     -DCMAKE_CXX_COMPILER="clang++"               `
     -DCMAKE_C_COMPILER_TARGET=$TargetTriple      `

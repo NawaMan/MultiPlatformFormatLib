@@ -433,7 +433,7 @@ jobs:
 
   run-test-macos-x86-64:
     name: Run Test (macOS x86-64)
-    needs: build-library-macos-universal
+    needs: build-test-macos-universal
     runs-on: macos-13
 
     steps:
@@ -451,7 +451,7 @@ jobs:
 
   run-test-macos-arm-64:
     name: Run Test (macOS arm-64)
-    needs: build-library-macos-universal
+    needs: build-test-macos-universal
     runs-on: macos-14
 
     steps:
