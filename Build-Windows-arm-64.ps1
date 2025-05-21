@@ -91,8 +91,12 @@ $OptFlags     = "-O2 -flto -ffunction-sections -fdata-sections"
 $LinkFlags    = "-Wl,--gc-sections"
 $TargetTriple = "aarch64-pc-windows-msvc"
 
-# $env:CC       = "clang --target=$TargetTriple"
-# $env:CXX      = "clang++ --target=$TargetTriple"
+$LLVM_BIN = "C:/Program Files/LLVM/bin"
+$Clang    = "$LLVM_BIN/clang.exe"
+$ClangXX  = "$LLVM_BIN/clang++.exe"
+$Linker   = "$LLVM_BIN/lld-link.exe"
+$Ar       = "$LLVM_BIN/llvm-lib.exe"
+
 $env:CFLAGS   = $OptFlags
 $env:CXXFLAGS = $OptFlags
 $env:LDFLAGS  = $LinkFlags
@@ -111,8 +115,10 @@ cmake ..                                         `
     -DCMAKE_MSVC_RUNTIME_LIBRARY="MultiThreaded" `
     -DCMAKE_SYSTEM_NAME="Windows"                `
     -DCMAKE_SYSTEM_PROCESSOR="ARM64"             `
-    -DCMAKE_C_COMPILER="clang"                   `
-    -DCMAKE_CXX_COMPILER="clang++"               `
+    -DCMAKE_LINKER="$Linker"                     `
+    -DCMAKE_AR="$Ar"                             `
+    -DCMAKE_C_COMPILER="$Clang"                  `
+    -DCMAKE_CXX_COMPILER="$ClangXX"              `
     -DCMAKE_C_FLAGS="--target=$TargetTriple $OptFlags"   `
     -DCMAKE_CXX_FLAGS="--target=$TargetTriple $OptFlags" `
     -DCMAKE_EXE_LINKER_FLAGS="$LinkFlags"                `
