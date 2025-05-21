@@ -115,7 +115,7 @@ cmake ..                                         `
     -DCMAKE_CXX_COMPILER="clang++"               `
     -DCMAKE_C_COMPILER_TARGET=$TargetTriple      `
     -DCMAKE_CXX_COMPILER_TARGET=$TargetTriple    `
-    *> $BuildLog 2>&1
+    # *> $BuildLog 2>&1
 
 cmake --build . --config Release --parallel *> $BuildLog 2>&1
 cmake --install . *> $BuildLog 2>&1
