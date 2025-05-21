@@ -4,15 +4,6 @@ param (
     [string]$DistDir = "$PWD\dist"
 )
 
-Write-Section "Loading MSVC environment for ARM64"
-
-$VsWhere = "${env:ProgramFiles(x86)}\Microsoft Visual Studio\Installer\vswhere.exe"
-$VSPath = & $VsWhere -latest -property installationPath
-$VcVars = "$VSPath\VC\Auxiliary\Build\vcvarsall.bat"
-
-# Load ARM64 toolchain
-cmd /c "`"$VcVars`" amd64_arm64" > $null
-
 
 Set-StrictMode -Version Latest
 $ErrorActionPreference = "Stop"
@@ -26,6 +17,15 @@ $BuildLog = "$BuildDir\build.log"
 
 New-Item -ItemType Directory -Force -Path $BuildDir | Out-Null
 New-Item -ItemType File      -Force -Path $BuildLog | Out-Null
+
+Write-Section "Loading MSVC environment for ARM64"
+
+$VsWhere = "${env:ProgramFiles(x86)}\Microsoft Visual Studio\Installer\vswhere.exe"
+$VSPath = & $VsWhere -latest -property installationPath
+$VcVars = "$VSPath\VC\Auxiliary\Build\vcvarsall.bat"
+
+# Load ARM64 toolchain
+cmd /c "`"$VcVars`" amd64_arm64" > $null
 
 # Load environment
 $envLines = (Get-Content .\versions.env -Raw -Encoding UTF8).Replace("`u{FEFF}", "") -split "`n"
