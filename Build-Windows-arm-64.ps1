@@ -143,12 +143,10 @@ Write-Output "TargetDir: $TargetDir"
 Get-ChildItem "$TargetDir"
 Get-ChildItem "$TargetDir\lib"
 
-# Rename the static library
-New-Item -ItemType Directory -Force -Path "$TargetDir\lib-windows-arm-64" | Out-Null
-Move-Item "$TargetDir\lib\fmt.lib" "$TargetDir\lib-windows-arm-64\fmt.lib" -Force
+# Rename lib directory to lib-windows-arm-64
+Rename-Item -Path "$TargetDir\lib" -NewName "lib-windows-arm-64" -Force
 
-# Remove the lib directory as it's no longer needed
-Remove-Item -Path "$TargetDir\lib" -Recurse -Force
+# Directory has been renamed, no need to remove it
 
 # Rename the static library
 Write-Output "TargetDir: $TargetDir"

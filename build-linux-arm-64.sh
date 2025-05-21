@@ -65,9 +65,8 @@ cmake ..                                 \
 make -j$(nproc) >> "$BUILD_LOG" 2>&1
 make install    >> "$BUILD_LOG" 2>&1
 
-# Rename the static library
-mkdir -p "$TARGET_DIR/lib-linux-arm-64"
-mv "$TARGET_DIR/lib/libfmt.a" "$TARGET_DIR/lib-linux-arm-64/libfmt.a"
+# Rename lib directory to lib-linux-arm-64
+mv "$TARGET_DIR/lib" "$TARGET_DIR/lib-linux-arm-64"
 
 print_section "Packaging..."
 mkdir -p "$DIST_DIR"

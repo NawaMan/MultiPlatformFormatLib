@@ -126,12 +126,8 @@ Write-Output "TargetDir: $TargetDir"
 Get-ChildItem "$TargetDir"
 Get-ChildItem "$TargetDir\lib"
 
-# Rename the static library
-New-Item -ItemType Directory -Force -Path "$TargetDir\lib-windows-x86-64" | Out-Null
-Move-Item "$TargetDir\lib\fmt.lib" "$TargetDir\lib-windows-x86-64\fmt.lib" -Force
-
-# Remove the lib directory as it's no longer needed
-Remove-Item -Path "$TargetDir\lib" -Recurse -Force
+# Rename lib directory to lib-windows-x86-64
+Rename-Item -Path "$TargetDir\lib" -NewName "lib-windows-x86-64" -Force
 
 # Rename the static library
 Write-Output "TargetDir: $TargetDir"

@@ -8,288 +8,213 @@ on:
   workflow_dispatch:
 
 jobs:
-  # x86-64 Build Job
-  build-library-linux-x86-64:
-    name: Build (Linux x86-64)
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v3
+  # # x86-64 Build Job
+  # build-library-linux-x86-64:
+  #   name: Build (Linux x86-64)
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - name: Checkout repository
+  #       uses: actions/checkout@v3
 
-      - name: Set non-interactive frontend
-        run: echo 'DEBIAN_FRONTEND=noninteractive' >> $GITHUB_ENV
+  #     - name: Set non-interactive frontend
+  #       run: echo 'DEBIAN_FRONTEND=noninteractive' >> $GITHUB_ENV
 
-      - name: Build on x86-64
-        run: |
-          chmod +x *.sh
-          mkdir -p build
-          mkdir -p dist
+  #     - name: Build on x86-64
+  #       run: |
+  #         chmod +x *.sh
+  #         mkdir -p build
+  #         mkdir -p dist
 
-          echo "Ensure build environment ..."
-          sudo ./ensure-linux-x86-build-environment.sh
+  #         echo "Ensure build environment ..."
+  #         sudo ./ensure-linux-x86-build-environment.sh
 
-          echo "Build ..."
-          ./build-linux-x86-64.sh
+  #         echo "Build ..."
+  #         ./build-linux-x86-64.sh
             
-      - name: Upload build artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: fmt-linux-x86-64
-          path: dist/fmt-*_linux-x86-64_*.zip
-          if-no-files-found: error
-          retention-days: 1
+  #     - name: Upload build artifact
+  #       uses: actions/upload-artifact@v4
+  #       with:
+  #         name: fmt-linux-x86-64
+  #         path: dist/fmt-*_linux-x86-64_*.zip
+  #         if-no-files-found: error
+  #         retention-days: 1
 
-  # x86-64 Build Test Job
-  build-test-linux-x86-64:
-    name: Build Test (Linux x86-64)
-    needs: build-library-linux-x86-64
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v3
+  # # x86-64 Build Test Job
+  # build-test-linux-x86-64:
+  #   name: Build Test (Linux x86-64)
+  #   needs: build-library-linux-x86-64
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - name: Checkout repository
+  #       uses: actions/checkout@v3
 
-      - name: Set non-interactive frontend
-        run: echo 'DEBIAN_FRONTEND=noninteractive' >> $GITHUB_ENV
+  #     - name: Set non-interactive frontend
+  #       run: echo 'DEBIAN_FRONTEND=noninteractive' >> $GITHUB_ENV
 
-      - name: Download build artifact
-        uses: actions/download-artifact@v4
-        with:
-          name: fmt-linux-x86-64
-          path: dist
+  #     - name: Download build artifact
+  #       uses: actions/download-artifact@v4
+  #       with:
+  #         name: fmt-linux-x86-64
+  #         path: dist
 
-      - name: Run on x86-64
-        run: |
-            # Install minimal dependencies for testing
-            sudo apt-get update
-            sudo apt-get install -y      \
-              build-essential            \
-              gnupg                      \
-              lsb-release                \
-              unzip                      \
-              wget                       \
-              2>&1 | grep -E 'is already the newest version|Setting up|Preparing to unpack|Installing'
+  #     - name: Run on x86-64
+  #       run: |
+  #           # Install minimal dependencies for testing
+  #           sudo apt-get update
+  #           sudo apt-get install -y      \
+  #             build-essential            \
+  #             gnupg                      \
+  #             lsb-release                \
+  #             unzip                      \
+  #             wget                       \
+  #             2>&1 | grep -E 'is already the newest version|Setting up|Preparing to unpack|Installing'
 
-            sudo ./ensure-linux-llvm-setup.sh
+  #           sudo ./ensure-linux-llvm-setup.sh
 
-            DIST_FILE=$(find dist -name 'fmt-*_linux-x86-64_*.zip' -type f)
+  #           DIST_FILE=$(find dist -name 'fmt-*_linux-x86-64_*.zip' -type f)
 
-            cd tests
-            ./build-simple-test-linux-x86-64.sh "../$DIST_FILE"
+  #           cd tests
+  #           ./build-simple-test-linux-x86-64.sh "../$DIST_FILE"
 
-      - name: Upload test artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: fmt-linux-x86-64-test
-          path: tests/simple-test
-          if-no-files-found: error
-          retention-days: 1
+  #     - name: Upload test artifact
+  #       uses: actions/upload-artifact@v4
+  #       with:
+  #         name: fmt-linux-x86-64-test
+  #         path: tests/simple-test
+  #         if-no-files-found: error
+  #         retention-days: 1
 
-  # x86-64 Run Test Job
-  run-test-linux-x86-64:
-    name: Run Test (Linux x86-64)
-    needs: build-test-linux-x86-64
-    runs-on: ubuntu-latest
-    steps:
-      - name: Download build artifact
-        uses: actions/download-artifact@v4
-        with:
-          name: fmt-linux-x86-64-test
+  # # x86-64 Run Test Job
+  # run-test-linux-x86-64:
+  #   name: Run Test (Linux x86-64)
+  #   needs: build-test-linux-x86-64
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - name: Download build artifact
+  #       uses: actions/download-artifact@v4
+  #       with:
+  #         name: fmt-linux-x86-64-test
 
-      - name: Run test
-        run: |
-            chmod +x simple-test
-            ./simple-test
+  #     - name: Run test
+  #       run: |
+  #           chmod +x simple-test
+  #           ./simple-test
 
 
-  # ARM-64 Build Job
-  build-library-linux-arm-64:
-    name: Build (Linux ARM-64)
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v3
+  # # ARM-64 Build Job
+  # build-library-linux-arm-64:
+  #   name: Build (Linux ARM-64)
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - name: Checkout repository
+  #       uses: actions/checkout@v3
 
-      - name: Set non-interactive frontend
-        run: echo 'DEBIAN_FRONTEND=noninteractive' >> $GITHUB_ENV
+  #     - name: Set non-interactive frontend
+  #       run: echo 'DEBIAN_FRONTEND=noninteractive' >> $GITHUB_ENV
 
-      - name: Run on ARM-64
-        uses: uraimo/run-on-arch-action@v2
-        with:
-          arch: aarch64
-          distro: ubuntu22.04
-          run: |
-            chmod +x *.sh
-            mkdir -p build
-            mkdir -p dist
+  #     - name: Run on ARM-64
+  #       uses: uraimo/run-on-arch-action@v2
+  #       with:
+  #         arch: aarch64
+  #         distro: ubuntu22.04
+  #         run: |
+  #           chmod +x *.sh
+  #           mkdir -p build
+  #           mkdir -p dist
 
-            echo "Ensure build environment ..."
-            ./ensure-linux-arm-build-environment.sh
+  #           echo "Ensure build environment ..."
+  #           ./ensure-linux-arm-build-environment.sh
 
-            echo "Build ..."
-            ./build-linux-arm-64.sh
+  #           echo "Build ..."
+  #           ./build-linux-arm-64.sh
             
-      - name: Upload build artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: fmt-linux-arm-64
-          path: dist/fmt-*_linux-arm-64_*.zip
-          if-no-files-found: error
-          retention-days: 1
+  #     - name: Upload build artifact
+  #       uses: actions/upload-artifact@v4
+  #       with:
+  #         name: fmt-linux-arm-64
+  #         path: dist/fmt-*_linux-arm-64_*.zip
+  #         if-no-files-found: error
+  #         retention-days: 1
 
-  # ARM-64 Build Test Job
-  build-test-linux-arm-64:
-    name: Build Test (Linux ARM-64)
-    needs: build-library-linux-arm-64
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v3
+  # # ARM-64 Build Test Job
+  # build-test-linux-arm-64:
+  #   name: Build Test (Linux ARM-64)
+  #   needs: build-library-linux-arm-64
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - name: Checkout repository
+  #       uses: actions/checkout@v3
 
-      - name: Set non-interactive frontend
-        run: echo 'DEBIAN_FRONTEND=noninteractive' >> $GITHUB_ENV
+  #     - name: Set non-interactive frontend
+  #       run: echo 'DEBIAN_FRONTEND=noninteractive' >> $GITHUB_ENV
 
-      - name: Download build artifact
-        uses: actions/download-artifact@v4
-        with:
-          name: fmt-linux-arm-64
-          path: dist
+  #     - name: Download build artifact
+  #       uses: actions/download-artifact@v4
+  #       with:
+  #         name: fmt-linux-arm-64
+  #         path: dist
 
-      - name: Run on ARM-64
-        uses: uraimo/run-on-arch-action@v2
-        with:
-          arch: aarch64
-          distro: ubuntu22.04
-          run: |
-            # Set environment variables
-            export CLANG_VERSION=20
+  #     - name: Run on ARM-64
+  #       uses: uraimo/run-on-arch-action@v2
+  #       with:
+  #         arch: aarch64
+  #         distro: ubuntu22.04
+  #         run: |
+  #           # Set environment variables
+  #           export CLANG_VERSION=20
 
-            # Install minimal dependencies for testing
-            apt-get update
-            apt-get install -y           \
-              build-essential            \
-              cmake                      \
-              curl                       \
-              gnupg                      \
-              lsb-release                \
-              software-properties-common \
-              pkg-config                 \
-              unzip                      \
-              wget                       \
-              2>&1 | grep -E 'is already the newest version|Setting up|Preparing to unpack|Installing'
+  #           # Install minimal dependencies for testing
+  #           apt-get update
+  #           apt-get install -y           \
+  #             build-essential            \
+  #             cmake                      \
+  #             curl                       \
+  #             gnupg                      \
+  #             lsb-release                \
+  #             software-properties-common \
+  #             pkg-config                 \
+  #             unzip                      \
+  #             wget                       \
+  #             2>&1 | grep -E 'is already the newest version|Setting up|Preparing to unpack|Installing'
             
-            ./ensure-linux-llvm-setup.sh
+  #           ./ensure-linux-llvm-setup.sh
 
-            DIST_FILE=$(find dist -name 'fmt-*_linux-arm-64_*.zip' -type f)
+  #           DIST_FILE=$(find dist -name 'fmt-*_linux-arm-64_*.zip' -type f)
 
-            cd tests
-            ./build-simple-test-linux-arm-64.sh "../$DIST_FILE"
+  #           cd tests
+  #           ./build-simple-test-linux-arm-64.sh "../$DIST_FILE"
 
-      - name: Upload test artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: fmt-linux-arm-64-test
-          path: tests/simple-test
-          if-no-files-found: error
-          retention-days: 1
+  #     - name: Upload test artifact
+  #       uses: actions/upload-artifact@v4
+  #       with:
+  #         name: fmt-linux-arm-64-test
+  #         path: tests/simple-test
+  #         if-no-files-found: error
+  #         retention-days: 1
 
-  # ARM-64 Run Test Job
-  run-test-linux-arm-64:
-    name: Run Test (Linux ARM-64)
-    needs: build-test-linux-arm-64
-    runs-on: ubuntu-latest
-    steps:
-      - name: Download build artifact
-        uses: actions/download-artifact@v4
-        with:
-          name: fmt-linux-arm-64-test
+  # # ARM-64 Run Test Job
+  # run-test-linux-arm-64:
+  #   name: Run Test (Linux ARM-64)
+  #   needs: build-test-linux-arm-64
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - name: Download build artifact
+  #       uses: actions/download-artifact@v4
+  #       with:
+  #         name: fmt-linux-arm-64-test
 
-      - name: Install dependencies
-        uses: uraimo/run-on-arch-action@v2
-        with:
-          arch: aarch64
-          distro: ubuntu22.04
-          run: |
-            chmod +x simple-test
-            ./simple-test
-
-  # Windows Build Job
-  build-library-windows-x86-64:
-    name: Build (Windows x86-64)
-    runs-on: windows-latest
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v3
-
-      - name: Setup Windows build environment
-        shell: pwsh
-        run: |
-          # Create build directories
-          New-Item -ItemType Directory -Path build -Force | Out-Null
-          New-Item -ItemType Directory -Path dist -Force | Out-Null
-          .\Ensure-WindowsBuildEnvironment.ps1
-
-          .\Build-Windows-x86-64.ps1
-      
-      - name: Upload build artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: fmt-windows-x86-64
-          path: dist/fmt-*_windows-x86-64_*.zip
-          if-no-files-found: warn
-          retention-days: 1
-
-  # Windows x86-64 Build Test Job
-  build-test-windows-x86-64:
-    name: Build Test (Windows x86-64)
-    needs: build-library-windows-x86-64
-    runs-on: windows-latest
-
-    steps:
-    - name: Checkout repository
-      uses: actions/checkout@v3
-
-    - name: Download build artifact
-      uses: actions/download-artifact@v4
-      with:
-        name: fmt-windows-x86-64
-        path: dist
-
-    - name: Enable UTF-8 and allow script execution
-      run: |
-        chcp 65001
-        Set-ExecutionPolicy Bypass -Scope Process -Force
-
-    - name: Build test executable
-      shell: pwsh
-      run: |
-        cd tests
-        $distFile = Get-ChildItem -Path "../dist" -Filter "fmt-*_windows-x86-64_*.zip" -Recurse | Select-Object -ExpandProperty FullName
-        ./Build-SimpleTest-windows-x86-64.ps1 $distFile
-
-    - name: Upload test binary
-      uses: actions/upload-artifact@v4
-      with:
-        name: fmt-windows-x86-64-test
-        path: tests/simple-test-x86-64.exe
-
-  run-test-windows-x86-64:
-    name: Run Test (Windows x86-64)
-    needs: build-test-windows-x86-64
-    runs-on: windows-latest
-
-    steps:
-      - name: Download test binary
-        uses: actions/download-artifact@v4
-        with:
-          name: fmt-windows-x86-64-test
-
-      - name: Run test
-        run: .\simple-test-x86-64.exe
-        shell: cmd
+  #     - name: Install dependencies
+  #       uses: uraimo/run-on-arch-action@v2
+  #       with:
+  #         arch: aarch64
+  #         distro: ubuntu22.04
+  #         run: |
+  #           chmod +x simple-test
+  #           ./simple-test
 
   # # Windows Build Job
-  # build-library-windows-arm-64:
-  #   name: Build (Windows arm)
+  # build-library-windows-x86-64:
+  #   name: Build (Windows x86-64)
   #   runs-on: windows-latest
   #   steps:
   #     - name: Checkout repository
@@ -303,20 +228,20 @@ jobs:
   #         New-Item -ItemType Directory -Path dist -Force | Out-Null
   #         .\Ensure-WindowsBuildEnvironment.ps1
 
-  #         .\Build-Windows-arm-64.ps1
+  #         .\Build-Windows-x86-64.ps1
       
   #     - name: Upload build artifact
   #       uses: actions/upload-artifact@v4
   #       with:
-  #         name: fmt-windows-arm-64
-  #         path: dist/fmt-*_windows-arm-64_*.zip
+  #         name: fmt-windows-x86-64
+  #         path: dist/fmt-*_windows-x86-64_*.zip
   #         if-no-files-found: warn
   #         retention-days: 1
 
-  # # Windows ARM64 Build Test Job
-  # build-test-windows-arm-64:
-  #   name: Build Test (Windows ARM64)
-  #   needs: build-library-windows-arm-64
+  # # Windows x86-64 Build Test Job
+  # build-test-windows-x86-64:
+  #   name: Build Test (Windows x86-64)
+  #   needs: build-library-windows-x86-64
   #   runs-on: windows-latest
 
   #   steps:
@@ -326,7 +251,7 @@ jobs:
   #   - name: Download build artifact
   #     uses: actions/download-artifact@v4
   #     with:
-  #       name: fmt-windows-arm-64
+  #       name: fmt-windows-x86-64
   #       path: dist
 
   #   - name: Enable UTF-8 and allow script execution
@@ -334,136 +259,245 @@ jobs:
   #       chcp 65001
   #       Set-ExecutionPolicy Bypass -Scope Process -Force
 
-  #   - name: Build test executable for ARM64
+  #   - name: Build test executable
   #     shell: pwsh
   #     run: |
   #       cd tests
-  #       $distFile = Get-ChildItem -Path "../dist" -Filter "fmt-*_windows-arm-64_*.zip" -Recurse | Select-Object -ExpandProperty FullName
-  #       ./Build-SimpleTest-windows-arm-64.ps1 $distFile
+  #       $distFile = Get-ChildItem -Path "../dist" -Filter "fmt-*_windows-x86-64_*.zip" -Recurse | Select-Object -ExpandProperty FullName
+  #       ./Build-SimpleTest-windows-x86-64.ps1 $distFile
 
   #   - name: Upload test binary
   #     uses: actions/upload-artifact@v4
   #     with:
-  #       name: fmt-windows-arm-64-test
-  #       path: tests/simple-test-arm64.exe
+  #       name: fmt-windows-x86-64-test
+  #       path: tests/simple-test-x86-64.exe
 
-
-  # run-test-windows-arm-64:
-  #   name: Run Test (Windows ARM64)
-  #   needs: build-test-windows-arm-64
-  #   runs-on: windows-11-arm
+  # run-test-windows-x86-64:
+  #   name: Run Test (Windows x86-64)
+  #   needs: build-test-windows-x86-64
+  #   runs-on: windows-latest
 
   #   steps:
   #     - name: Download test binary
   #       uses: actions/download-artifact@v4
   #       with:
-  #         name: fmt-windows-arm-64-test
+  #         name: fmt-windows-x86-64-test
 
   #     - name: Run test
-  #       run: .\simple-test-arm-64.exe
+  #       run: .\simple-test-x86-64.exe
   #       shell: cmd
 
-  # macOS Universal Build Job
-  build-library-macos-universal:
-    name: Build (macOS Universal)
-    runs-on: macos-13 # or macos-14 if using latest Xcode
+  # # # Windows Build Job
+  # # build-library-windows-arm-64:
+  # #   name: Build (Windows arm)
+  # #   runs-on: windows-latest
+  # #   steps:
+  # #     - name: Checkout repository
+  # #       uses: actions/checkout@v3
+
+  # #     - name: Setup Windows build environment
+  # #       shell: pwsh
+  # #       run: |
+  # #         # Create build directories
+  # #         New-Item -ItemType Directory -Path build -Force | Out-Null
+  # #         New-Item -ItemType Directory -Path dist -Force | Out-Null
+  # #         .\Ensure-WindowsBuildEnvironment.ps1
+
+  # #         .\Build-Windows-arm-64.ps1
+      
+  # #     - name: Upload build artifact
+  # #       uses: actions/upload-artifact@v4
+  # #       with:
+  # #         name: fmt-windows-arm-64
+  # #         path: dist/fmt-*_windows-arm-64_*.zip
+  # #         if-no-files-found: warn
+  # #         retention-days: 1
+
+  # # # Windows ARM64 Build Test Job
+  # # build-test-windows-arm-64:
+  # #   name: Build Test (Windows ARM64)
+  # #   needs: build-library-windows-arm-64
+  # #   runs-on: windows-latest
+
+  # #   steps:
+  # #   - name: Checkout repository
+  # #     uses: actions/checkout@v3
+
+  # #   - name: Download build artifact
+  # #     uses: actions/download-artifact@v4
+  # #     with:
+  # #       name: fmt-windows-arm-64
+  # #       path: dist
+
+  # #   - name: Enable UTF-8 and allow script execution
+  # #     run: |
+  # #       chcp 65001
+  # #       Set-ExecutionPolicy Bypass -Scope Process -Force
+
+  # #   - name: Build test executable for ARM64
+  # #     shell: pwsh
+  # #     run: |
+  # #       cd tests
+  # #       $distFile = Get-ChildItem -Path "../dist" -Filter "fmt-*_windows-arm-64_*.zip" -Recurse | Select-Object -ExpandProperty FullName
+  # #       ./Build-SimpleTest-windows-arm-64.ps1 $distFile
+
+  # #   - name: Upload test binary
+  # #     uses: actions/upload-artifact@v4
+  # #     with:
+  # #       name: fmt-windows-arm-64-test
+  # #       path: tests/simple-test-arm64.exe
+
+
+  # # run-test-windows-arm-64:
+  # #   name: Run Test (Windows ARM64)
+  # #   needs: build-test-windows-arm-64
+  # #   runs-on: windows-11-arm
+
+  # #   steps:
+  # #     - name: Download test binary
+  # #       uses: actions/download-artifact@v4
+  # #       with:
+  # #         name: fmt-windows-arm-64-test
+
+  # #     - name: Run test
+  # #       run: .\simple-test-arm-64.exe
+  # #       shell: cmd
+
+  # # macOS Universal Build Job
+  # build-library-macos-universal:
+  #   name: Build (macOS Universal)
+  #   runs-on: macos-13 # or macos-14 if using latest Xcode
+  #   steps:
+  #     - name: Checkout repository
+  #       uses: actions/checkout@v3
+
+  #     - name: Set non-interactive frontend
+  #       run: echo 'HOMEBREW_NO_AUTO_UPDATE=1' >> $GITHUB_ENV
+
+  #     - name: Make scripts executable
+  #       run: chmod +x *.sh sh-sources/*.sh
+
+  #     - name: Ensure build environment
+  #       run: |
+  #         ./ensure-macos-build-environment.sh
+
+  #     - name: Build macOS Universal binary
+  #       run: |
+  #         ./build-macos-universal.sh
+
+  #     - name: Upload build artifact
+  #       uses: actions/upload-artifact@v4
+  #       with:
+  #         name: fmt-macos-universal
+  #         path: dist/fmt-*_macos-universal_*.zip
+  #         if-no-files-found: error
+  #         retention-days: 1
+  
+  # build-test-macos-universal:
+  #   name: Build Test (macOS Universal)
+  #   needs: build-library-macos-universal
+  #   runs-on: macos-13
+  #   steps:
+  #     - name: Checkout repository
+  #       uses: actions/checkout@v3
+
+  #     - name: Set non-interactive frontend
+  #       run: echo 'HOMEBREW_NO_AUTO_UPDATE=1' >> $GITHUB_ENV
+
+  #     - name: Make scripts executable
+  #       run: chmod +x *.sh sh-sources/*.sh tests/*.sh
+
+  #     - name: Download build artifact
+  #       uses: actions/download-artifact@v4
+  #       with:
+  #         name: fmt-macos-universal
+  #         path: dist
+
+  #     - name: Ensure macOS build environment
+  #       run: |
+  #         ./ensure-macos-build-environment.sh
+
+  #     - name: Run macOS Universal test build
+  #       run: |
+  #         DIST_FILE=$(find dist -name 'fmt-*_macos-universal_*.zip' -type f)
+  #         cd tests
+  #         ./build-simple-test-macos-universal.sh "../$DIST_FILE"
+
+  #     - name: Upload test artifact
+  #       uses: actions/upload-artifact@v4
+  #       with:
+  #         name: fmt-macos-universal-test
+  #         path: tests/simple-test
+  #         if-no-files-found: error
+  #         retention-days: 1
+
+  # run-test-macos-x86-64:
+  #   name: Run Test (macOS x86-64)
+  #   needs: build-test-macos-universal
+  #   runs-on: macos-13
+
+  #   steps:
+  #     - name: Download test binary
+  #       uses: actions/download-artifact@v4
+  #       with:
+  #         name: fmt-macos-universal-test
+
+  #     - name: Make test executable
+  #       run: chmod +x simple-test
+
+  #     - name: Run test
+  #       run: ./simple-test
+  #       shell: bash
+
+  # run-test-macos-arm-64:
+  #   name: Run Test (macOS arm-64)
+  #   needs: build-test-macos-universal
+  #   runs-on: macos-14
+
+  #   steps:
+  #     - name: Download test binary
+  #       uses: actions/download-artifact@v4
+  #       with:
+  #         name: fmt-macos-universal-test
+
+  #     - name: Make test executable
+  #       run: chmod +x simple-test
+
+  #     - name: Run test
+  #       run: ./simple-test
+  #       shell: bash
+
+  build-library-wasm64:
+    name: Build (WASM64)
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
 
       - name: Set non-interactive frontend
-        run: echo 'HOMEBREW_NO_AUTO_UPDATE=1' >> $GITHUB_ENV
+        run: echo 'DEBIAN_FRONTEND=noninteractive' >> $GITHUB_ENV
 
-      - name: Make scripts executable
-        run: chmod +x *.sh sh-sources/*.sh
-
-      - name: Ensure build environment
+      - name: Install system dependencies
         run: |
-          ./ensure-macos-build-environment.sh
+          sudo apt-get update
+          sudo apt-get install -y git cmake python3 python3-pip zip
 
-      - name: Build macOS Universal binary
+      - name: Set up Emscripten
         run: |
-          ./build-macos-universal.sh
+          chmod +x ensure-emscripten-setup.sh
+          sudo ./ensure-emscripten-setup.sh
 
-      - name: Upload build artifact
+      - name: Build fmt for WASM64
+        run: |
+          chmod +x *.sh
+          mkdir -p build
+          mkdir -p dist
+          ./build-wasm-64.sh
+
+      - name: Upload WASM64 artifact
         uses: actions/upload-artifact@v4
         with:
-          name: fmt-macos-universal
-          path: dist/fmt-*_macos-universal_*.zip
+          name: fmt-wasm64
+          path: dist/fmt-*_wasm64_*.zip
           if-no-files-found: error
           retention-days: 1
-  
-  build-test-macos-universal:
-    name: Build Test (macOS Universal)
-    needs: build-library-macos-universal
-    runs-on: macos-13
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v3
-
-      - name: Set non-interactive frontend
-        run: echo 'HOMEBREW_NO_AUTO_UPDATE=1' >> $GITHUB_ENV
-
-      - name: Make scripts executable
-        run: chmod +x *.sh sh-sources/*.sh tests/*.sh
-
-      - name: Download build artifact
-        uses: actions/download-artifact@v4
-        with:
-          name: fmt-macos-universal
-          path: dist
-
-      - name: Ensure macOS build environment
-        run: |
-          ./ensure-macos-build-environment.sh
-
-      - name: Run macOS Universal test build
-        run: |
-          DIST_FILE=$(find dist -name 'fmt-*_macos-universal_*.zip' -type f)
-          cd tests
-          ./build-simple-test-macos-universal.sh "../$DIST_FILE"
-
-      - name: Upload test artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: fmt-macos-universal-test
-          path: tests/simple-test
-          if-no-files-found: error
-          retention-days: 1
-
-  run-test-macos-x86-64:
-    name: Run Test (macOS x86-64)
-    needs: build-test-macos-universal
-    runs-on: macos-13
-
-    steps:
-      - name: Download test binary
-        uses: actions/download-artifact@v4
-        with:
-          name: fmt-macos-universal-test
-
-      - name: Make test executable
-        run: chmod +x simple-test
-
-      - name: Run test
-        run: ./simple-test
-        shell: bash
-
-  run-test-macos-arm-64:
-    name: Run Test (macOS arm-64)
-    needs: build-test-macos-universal
-    runs-on: macos-14
-
-    steps:
-      - name: Download test binary
-        uses: actions/download-artifact@v4
-        with:
-          name: fmt-macos-universal-test
-
-      - name: Make test executable
-        run: chmod +x simple-test
-
-      - name: Run test
-        run: ./simple-test
-        shell: bash
-  
