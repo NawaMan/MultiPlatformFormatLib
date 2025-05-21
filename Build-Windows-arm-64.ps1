@@ -87,7 +87,7 @@ Write-Section "Building fmt for Windows ARM-64"
 
 $SourceDir    = "$BuildDir\fmt-source\fmt-$env:FMT_VERSION"
 $TargetDir    = "$BuildDir\fmt-target"
-$OptFlags     = "-O2 -flto -ffunction-sections -fdata-sections -fPIC"
+$OptFlags     = "-O2 -flto -ffunction-sections -fdata-sections"
 $LinkFlags    = "-Wl,--gc-sections"
 $TargetTriple = "aarch64-pc-windows-msvc"
 
