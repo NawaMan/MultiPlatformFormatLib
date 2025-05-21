@@ -111,10 +111,11 @@ cmake ..                                         `
     -DCMAKE_MSVC_RUNTIME_LIBRARY="MultiThreaded" `
     -DCMAKE_SYSTEM_NAME="Windows"                `
     -DCMAKE_SYSTEM_PROCESSOR="ARM64"             `
-    -DCMAKE_C_COMPILER="clang --target=$TargetTriple"     `
-    -DCMAKE_CXX_COMPILER="clang++ --target=$TargetTriple" `
-    -DCMAKE_EXE_LINKER_FLAGS="$LinkFlags"                 `
-
+    -DCMAKE_C_COMPILER="$CCompiler"              `
+    -DCMAKE_CXX_COMPILER="$CXXCompiler"          `
+    -DCMAKE_C_FLAGS="--target=$TargetTriple $OptFlags"   `
+    -DCMAKE_CXX_FLAGS="--target=$TargetTriple $OptFlags" `
+    -DCMAKE_EXE_LINKER_FLAGS="$LinkFlags"                `
     # *> $BuildLog 2>&1
 
 cmake --build . --config Release --parallel # *> $BuildLog 2>&1
