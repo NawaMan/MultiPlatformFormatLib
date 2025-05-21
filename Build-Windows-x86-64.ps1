@@ -91,7 +91,6 @@ $OptFlags     = "-O2 -flto -ffunction-sections -fdata-sections -fPIC"
 $LinkFlags    = "-Wl,--gc-sections"
 $TargetTriple = "x86_64-pc-windows-msvc"
 
-# Optional: set these env vars for downstream tools, but CMake won't use them directly
 $env:CC       = "clang --target=$TargetTriple"
 $env:CXX      = "clang++ --target=$TargetTriple"
 $env:CFLAGS   = $OptFlags
@@ -101,25 +100,27 @@ $env:LDFLAGS  = $LinkFlags
 New-Item -ItemType Directory -Force -Path "$SourceDir\build" | Out-Null
 Set-Location "$SourceDir\build"
 
-cmake ..                                         `
-    -G "Ninja"                                   `
-    -DCMAKE_BUILD_TYPE=Release                   `
-    -DCMAKE_INSTALL_PREFIX="$TargetDir"          `
-    -DFMT_DOC=OFF                                `
-    -DFMT_TEST=OFF                               `
-    -DFMT_INSTALL=ON                             `
-    -DBUILD_SHARED_LIBS=OFF                      `
-    -DCMAKE_MSVC_RUNTIME_LIBRARY="MultiThreaded" `
-    -DCMAKE_SYSTEM_NAME="Windows"                `
-    -DCMAKE_SYSTEM_PROCESSOR="x86_64"            `
-    -DCMAKE_C_COMPILER="clang"                   `
-    -DCMAKE_CXX_COMPILER="clang++"               `
-    -DCMAKE_C_COMPILER_TARGET=$TargetTriple      `
-    -DCMAKE_CXX_COMPILER_TARGET=$TargetTriple    `
+cmake ..                                                 `
+    -G "Ninja"                                           `
+    -DCMAKE_BUILD_TYPE=Release                           `
+    -DCMAKE_INSTALL_PREFIX="$TargetDir"                  `
+    -DFMT_DOC=OFF                                        `
+    -DFMT_TEST=OFF                                       `
+    -DFMT_INSTALL=ON                                     `
+    -DBUILD_SHARED_LIBS=OFF                              `
+    -DCMAKE_MSVC_RUNTIME_LIBRARY="MultiThreaded"         `
+    -DCMAKE_SYSTEM_NAME="Windows"                        `
+    -DCMAKE_SYSTEM_PROCESSOR="x86_64"                    `
+    -DCMAKE_C_COMPILER="clang"                           `
+    -DCMAKE_CXX_COMPILER="clang++"                       `
+    -DCMAKE_C_FLAGS="--target=$TargetTriple $OptFlags"   `
+    -DCMAKE_CXX_FLAGS="--target=$TargetTriple $OptFlags" `
+    -DCMAKE_EXE_LINKER_FLAGS="$LinkFlags"
     # *> $BuildLog 2>&1
 
-cmake --build . --config Release --parallel *> $BuildLog 2>&1
-cmake --install . *> $BuildLog 2>&1
+cmake --build . --config Release --parallel # *> $BuildLog 2>&1
+cmake --install . # *> $BuildLog 2>&1
+
 
 # Rename the static library
 Write-Output "TargetDir: $TargetDir"
