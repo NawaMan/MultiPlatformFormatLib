@@ -26,14 +26,15 @@ $OutputExe  = "$PWD\simple-test-x86-64.exe"
 $Compiler   = "clang++"
 
 $CompileArgs = @(
-    "simple-test.cpp"          ,
-    "-std=c++23"               ,
-    "-O2"                      ,
-    "-D_CRT_SECURE_NO_WARNINGS",
-    "-I$IncludeDir"            ,
-    "-o", $OutputExe           ,
-    "--target=x86_64-windows"  ,
-    "-L$LibDir"                ,
+    "simple-test.cpp"                 ,
+    "-std=c++23"                      ,
+    "-O2"                             ,
+    "-D_CRT_SECURE_NO_WARNINGS"       ,
+    "-I$IncludeDir"                   ,
+    "-o", $OutputExe                  ,
+    "--target=x86_64-pc-windows-msvc" ,
+    "-fms-runtime-lib=static"         ,
+    "-L$LibDir"                       ,
     "-lfmt"
 )
 
