@@ -100,7 +100,7 @@ $env:LDFLAGS  = $LinkFlags
 New-Item -ItemType Directory -Force -Path "$SourceDir\build" | Out-Null
 Set-Location "$SourceDir\build"
 
-cmake .. `
+cmake ..                                         `
     -DCMAKE_BUILD_TYPE=Release                   `
     -DCMAKE_INSTALL_PREFIX="$TargetDir"          `
     -DFMT_DOC=OFF                                `
@@ -114,6 +114,7 @@ cmake .. `
     -DCMAKE_CXX_COMPILER="clang++"               `
     -DCMAKE_C_COMPILER_TARGET=$TargetTriple      `
     -DCMAKE_CXX_COMPILER_TARGET=$TargetTriple    `
+    -DCMAKE_EXE_LINKER_FLAGS="$LinkFlags"        `
     *> $BuildLog 2>&1
 
 cmake --build . --config Release --parallel *> $BuildLog 2>&1
@@ -129,9 +130,6 @@ Get-ChildItem "$TargetDir\lib"
 New-Item -ItemType Directory -Force -Path "$TargetDir\lib-windows-x86-64" | Out-Null
 Move-Item "$TargetDir\lib\fmt.lib" "$TargetDir\lib-windows-x86-64\fmt.lib" -Force
 
-Write-Status "fmt.lib headers:"
-& llvm-readobj --file-headers "$TargetDir\lib-windows-x86-64\fmt.lib"
-
 # Remove the lib directory as it's no longer needed
 Remove-Item -Path "$TargetDir\lib" -Recurse -Force
 
@@ -139,6 +137,9 @@ Remove-Item -Path "$TargetDir\lib" -Recurse -Force
 Write-Output "TargetDir: $TargetDir"
 Get-ChildItem "$TargetDir"
 Get-ChildItem "$TargetDir\lib-windows-x86-64"
+
+Write-Status "fmt.lib headers:"
+& llvm-readobj --file-headers "$TargetDir\lib-windows-x86-64\fmt.lib"
 
 Write-Section "Packaging"
 
