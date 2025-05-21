@@ -1,3 +1,5 @@
+# Build-Windows-x86-64.ps1
+
 param (
     [string]$DistDir = "$PWD\dist"
 )
@@ -19,8 +21,8 @@ New-Item -ItemType File      -Force -Path $BuildLog | Out-Null
 $envLines = (Get-Content .\versions.env -Raw -Encoding UTF8).Replace("`u{FEFF}", "") -split "`n"
 foreach ($line in $envLines) {
     $line = $line.Trim()
-    if ($line -match '^\s*#') { continue }
-    if ($line -match '^\s*$') { continue }
+    if ($line -match '^\s*#') { continue }       # skip comment
+    if ($line -match '^\s*$') { continue }       # skip empty line
 
     $parts = $line -split '=', 2
     if ($parts.Count -eq 2) {
@@ -43,6 +45,7 @@ Write-Output "Clang++ path    : $(Get-Command clang++ | Select-Object -ExpandPro
 
 Write-Section "Check compiler version"
 
+# Extract actual clang version (e.g., "20.1.5")
 $ActualClangVersionLine = & clang --version | Select-String -Pattern "clang version\s+(\d+\.\d+\.\d+)"
 if ($ActualClangVersionLine -match "clang version\s+(\d+\.\d+\.\d+)") {
     $ActualClangVersion = $Matches[1]
@@ -51,11 +54,26 @@ if ($ActualClangVersionLine -match "clang version\s+(\d+\.\d+\.\d+)") {
     throw "Unable to determine clang version"
 }
 
-$BuildClang    = if ($env:BUILD_CLANG) { $env:BUILD_CLANG } else { "true" }
+Write-Output "Actual clang version: $ActualClangVersion"
+Write-Output "Actual clang major version: $ActualMajorVersion"
+
+# Get version expectations from env (with defaults for robustness)
+$BuildClang     = if ($env:BUILD_CLANG) { $env:BUILD_CLANG } else { "true" }
+$IgnoreVersion  = if ($env:IGNORE_COMPILER_VERSION) { $env:IGNORE_COMPILER_VERSION } else { "0" }
+$ExpectedMajorVersion = $env:CLANG_VERSION
+
+# Perform the version check
+if ($BuildClang -eq "true" -and $IgnoreVersion -eq "0") {
+    if ($ActualMajorVersion -ne $ExpectedMajorVersion) {
+        throw "Clang version $ExpectedMajorVersion.x required, found $ActualClangVersion"
+    }
+}
+
+$BuildClang = if ($env:BUILD_CLANG) { $env:BUILD_CLANG } else { "true" }
 $IgnoreVersion = if ($env:IGNORE_COMPILER_VERSION) { $env:IGNORE_COMPILER_VERSION } else { "0" }
 
 if ($BuildClang -eq "true" -and $IgnoreVersion -eq "0") {
-    if ($ActualMajorVersion -ne $env:CLANG_VERSION) {
+    if ($ActualClangVersion.Split(".")[0] -ne $env:CLANG_VERSION) {
         throw "Clang version $env:CLANG_VERSION.x required, found $ActualClangVersion"
     }
 }
@@ -69,48 +87,49 @@ Write-Section "Building fmt for Windows x86-64"
 
 $SourceDir    = "$BuildDir\fmt-source\fmt-$env:FMT_VERSION"
 $TargetDir    = "$BuildDir\fmt-target"
-$TargetTriple = "x86_64-pc-windows-msvc"
-$OptFlags     = "-O2 -ffunction-sections -fdata-sections"
+$OptFlags     = "-O2 -flto -ffunction-sections -fdata-sections -fPIC"
 $LinkFlags    = "-Wl,--gc-sections"
+$TargetTriple = "x86_64-pc-windows-msvc"
 
-# Clean any previous CMake cache
-Remove-Item -Force -Recurse "$SourceDir\build" -ErrorAction SilentlyContinue
+$env:CC       = "clang --target=$TargetTriple"
+$env:CXX      = "clang++ --target=$TargetTriple"
+$env:CFLAGS   = $OptFlags
+$env:CXXFLAGS = $OptFlags
+$env:LDFLAGS  = $LinkFlags
+
 New-Item -ItemType Directory -Force -Path "$SourceDir\build" | Out-Null
 Set-Location "$SourceDir\build"
 
-cmake ..                                                 `
-    -G "Ninja"                                           `
-    -DCMAKE_BUILD_TYPE=Release                           `
-    -DCMAKE_INSTALL_PREFIX="$TargetDir"                  `
-    -DFMT_DOC=OFF                                        `
-    -DFMT_TEST=OFF                                       `
-    -DFMT_INSTALL=ON                                     `
-    -DBUILD_SHARED_LIBS=OFF                              `
-    -DCMAKE_MSVC_RUNTIME_LIBRARY="MultiThreaded"         `
-    -DCMAKE_SYSTEM_NAME="Windows"                        `
-    -DCMAKE_SYSTEM_PROCESSOR="x86_64"                    `
-    -DCMAKE_C_COMPILER="clang"                           `
-    -DCMAKE_CXX_COMPILER="clang++"                       `
-    -DCMAKE_C_COMPILER_TARGET=$TargetTriple              `
-    -DCMAKE_CXX_COMPILER_TARGET=$TargetTriple            `
-    -DCMAKE_C_FLAGS="$OptFlags"                          `
-    -DCMAKE_CXX_FLAGS="$OptFlags"                        `
-    -DCMAKE_EXE_LINKER_FLAGS="$LinkFlags"                `
-    -DCMAKE_AR="llvm-lib"                                `
-    -DCMAKE_LINKER="lld-link"
+cmake .. `
+    -DCMAKE_BUILD_TYPE=Release                   `
+    -DCMAKE_INSTALL_PREFIX="$TargetDir"          `
+    -DFMT_DOC=OFF                                `
+    -DFMT_TEST=OFF                               `
+    -DFMT_INSTALL=ON                             `
+    -DBUILD_SHARED_LIBS=OFF                      `
+    -DCMAKE_MSVC_RUNTIME_LIBRARY="MultiThreaded" `
+    -DCMAKE_SYSTEM_NAME="Windows"                `
+    -DCMAKE_SYSTEM_PROCESSOR="X86"               `
+    -DCMAKE_C_COMPILER="clang"                   `
+    -DCMAKE_CXX_COMPILER="clang++"               `
+    -DCMAKE_C_COMPILER_TARGET=$TargetTriple      `
+    -DCMAKE_CXX_COMPILER_TARGET=$TargetTriple    `
+    *> $BuildLog 2>&1
 
-cmake --build . --config Release --parallel
-cmake --install .
+cmake --build . --config Release --parallel *> $BuildLog 2>&1
+cmake --install . *> $BuildLog 2>&1
 
-# Rename and organize the static library
-Write-Output "TargetDir: $TargetDir"
+# Rename the static library
 New-Item -ItemType Directory -Force -Path "$TargetDir\lib-windows-x86-64" | Out-Null
 Move-Item "$TargetDir\lib\fmt.lib" "$TargetDir\lib-windows-x86-64\fmt.lib" -Force
 
-Write-Output "llvm-readobj:"
-& llvm-readobj --file-headers "$TargetDir\lib-windows-x86-64\fmt.lib"
-
+# Remove the lib directory as it's no longer needed
 Remove-Item -Path "$TargetDir\lib" -Recurse -Force
+
+# Rename the static library
+Write-Output "TargetDir: $TargetDir"
+Get-ChildItem "$TargetDir"
+Get-ChildItem "$TargetDir\lib-windows-x86-64"
 
 Write-Section "Packaging"
 
@@ -123,6 +142,7 @@ Copy-Item "$ProjectDir\LICENSE"      "$TargetDir" -Force
 Copy-Item "$ProjectDir\README.md"    "$TargetDir" -Force
 
 . $ProjectDir\Write-BuildMetadata.ps1
+
 Write-BuildMetadata `
     -TargetDir $TargetDir `
     -Compiler "Clang" `
@@ -132,14 +152,16 @@ Write-BuildMetadata `
     -OptFlags $OptFlags `
     -LinkFlags $LinkFlags
 
+
 Set-Location $TargetDir
 Write-Output "Current Directory:"
 Get-Location
 Write-Output "Directory Structure:"
-cmd.exe /c tree /F /A
+Get-ChildItem -Recurse | Format-Table -Property Mode,Length,Name -AutoSize
 
 Compress-Archive -Path * -DestinationPath $BuildZip -Force
-Set-ItemProperty -Path $BuildZip -Name Attributes -Value 'Normal'
+Set-ItemProperty -Path $BuildZip -Name Attributes -Value 'Normal'  # Ensure readable by others
+
 
 if (Test-Path $BuildZip) {
     Write-Status "Build succeeded!"
