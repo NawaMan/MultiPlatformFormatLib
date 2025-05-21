@@ -37,6 +37,11 @@ TARGET_DIR="$BUILD_DIR/fmt-target"
 OPT_FLAGS="-O2 -flto -ffunction-sections -fdata-sections -fPIC"
 LINK_FLAGS="-Wl,--gc-sections"
 
+source /opt/emsdk/emsdk_env.sh
+
+export EM_CACHE="$BUILD_DIR/.emscripten_cache"
+mkdir -p "$EM_CACHE"
+
 mkdir -p "$SOURCE_DIR/build"
 cd "$SOURCE_DIR/build"
 
