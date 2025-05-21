@@ -4,6 +4,16 @@ param (
     [string]$DistDir = "$PWD\dist"
 )
 
+Write-Section "Loading MSVC environment for ARM64"
+
+$VsWhere = "${env:ProgramFiles(x86)}\Microsoft Visual Studio\Installer\vswhere.exe"
+$VSPath = & $VsWhere -latest -property installationPath
+$VcVars = "$VSPath\VC\Auxiliary\Build\vcvarsall.bat"
+
+# Load ARM64 toolchain
+cmd /c "`"$VcVars`" amd64_arm64" > $null
+
+
 Set-StrictMode -Version Latest
 $ErrorActionPreference = "Stop"
 
@@ -95,7 +105,8 @@ $LLVM_BIN = "C:/Program Files/LLVM/bin"
 $Clang    = "$LLVM_BIN/clang.exe"
 $ClangXX  = "$LLVM_BIN/clang++.exe"
 $Linker   = "$LLVM_BIN/lld-link.exe"
-$Ar       = "$LLVM_BIN/llvm-lib.exe"
+# $Ar       = "$LLVM_BIN/llvm-lib.exe"
+$Ar       = "lib"
 
 $env:CFLAGS   = $OptFlags
 $env:CXXFLAGS = $OptFlags
@@ -103,6 +114,11 @@ $env:LDFLAGS  = $LinkFlags
 
 New-Item -ItemType Directory -Force -Path "$SourceDir\build" | Out-Null
 Set-Location "$SourceDir\build"
+
+Remove-Item -Recurse -Force "$SourceDir\build\CMakeCache.txt" -ErrorAction SilentlyContinue
+
+Remove-Item -Recurse -Force "$SourceDir\build\CMakeFiles" -ErrorAction SilentlyContinue
+Remove-Item "$SourceDir\build\build.ninja" -ErrorAction SilentlyContinue
 
 cmake ..                                         `
     -G "Ninja"                                   `
@@ -113,15 +129,9 @@ cmake ..                                         `
     -DFMT_INSTALL=ON                             `
     -DBUILD_SHARED_LIBS=OFF                      `
     -DCMAKE_MSVC_RUNTIME_LIBRARY="MultiThreaded" `
-    -DCMAKE_SYSTEM_NAME="Windows"                `
-    -DCMAKE_SYSTEM_PROCESSOR="ARM64"             `
-    -DCMAKE_LINKER="$Linker"                     `
-    -DCMAKE_AR="$Ar"                             `
     -DCMAKE_C_COMPILER="$Clang"                  `
     -DCMAKE_CXX_COMPILER="$ClangXX"              `
-    -DCMAKE_C_FLAGS="--target=$TargetTriple $OptFlags"   `
-    -DCMAKE_CXX_FLAGS="--target=$TargetTriple $OptFlags" `
-    -DCMAKE_EXE_LINKER_FLAGS="$LinkFlags"                `
+    -DCMAKE_EXE_LINKER_FLAGS="$LinkFlags"        `
     # *> $BuildLog 2>&1
 
 cmake --build . --config Release --parallel # *> $BuildLog 2>&1

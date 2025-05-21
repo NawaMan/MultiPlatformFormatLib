@@ -61,6 +61,9 @@ try {
     winget install -e --id Ninja.Ninja --accept-source-agreements --accept-package-agreements
 }
 
+$vsInstallPath = & "${env:ProgramFiles(x86)}\Microsoft Visual Studio\Installer\vswhere.exe" -latest -property installationPath
+& "$vsInstallPath\VC\Auxiliary\Build\vcvarsall.bat" amd64_arm64 > $null
+
 # Now run the LLVM setup script
 Write-Section "Setting up LLVM/Clang"
 & "$ScriptPath\Ensure-WindowsLlvmSetup.ps1"
