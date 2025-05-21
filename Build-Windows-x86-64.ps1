@@ -129,6 +129,7 @@ Get-ChildItem "$TargetDir\lib"
 New-Item -ItemType Directory -Force -Path "$TargetDir\lib-windows-x86-64" | Out-Null
 Move-Item "$TargetDir\lib\fmt.lib" "$TargetDir\lib-windows-x86-64\fmt.lib" -Force
 
+Write-Status "fmt.lib headers:"
 & llvm-readobj --file-headers "$TargetDir\lib-windows-x86-64\fmt.lib"
 
 # Remove the lib directory as it's no longer needed
