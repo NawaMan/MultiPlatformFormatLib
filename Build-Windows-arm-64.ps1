@@ -108,6 +108,8 @@ $Linker   = "$LLVM_BIN/lld-link.exe"
 # $Ar       = "$LLVM_BIN/llvm-lib.exe"
 $Ar       = "lib"
 
+$env:CC       = $Clang
+$env:CXX      = $ClangXX
 $env:CFLAGS   = $OptFlags
 $env:CXXFLAGS = $OptFlags
 $env:LDFLAGS  = $LinkFlags
@@ -129,8 +131,6 @@ cmake ..                                         `
     -DFMT_INSTALL=ON                             `
     -DBUILD_SHARED_LIBS=OFF                      `
     -DCMAKE_MSVC_RUNTIME_LIBRARY="MultiThreaded" `
-    -DCMAKE_C_COMPILER="$Clang"                  `
-    -DCMAKE_CXX_COMPILER="$ClangXX"              `
     -DCMAKE_EXE_LINKER_FLAGS="$LinkFlags"        `
     # *> $BuildLog 2>&1
 
@@ -154,6 +154,10 @@ Remove-Item -Path "$TargetDir\lib" -Recurse -Force
 Write-Output "TargetDir: $TargetDir"
 Get-ChildItem "$TargetDir"
 Get-ChildItem "$TargetDir\lib-windows-arm-64"
+
+if (-Not (Test-Path "$TargetDir\lib-windows-arm-64\fmt.lib")) {
+    throw "❌ fmt.lib not found after build! Build likely failed or didn't run the install step correctly."
+}
 
 Write-Status "fmt.lib headers:"
 & llvm-readobj --file-headers "$TargetDir\lib-windows-arm-64\fmt.lib"
