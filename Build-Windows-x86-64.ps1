@@ -91,6 +91,7 @@ $OptFlags     = "-O2 -flto -ffunction-sections -fdata-sections -fPIC"
 $LinkFlags    = "-Wl,--gc-sections"
 $TargetTriple = "x86_64-pc-windows-msvc"
 
+# Optional: set these env vars for downstream tools, but CMake won't use them directly
 $env:CC       = "clang --target=$TargetTriple"
 $env:CXX      = "clang++ --target=$TargetTriple"
 $env:CFLAGS   = $OptFlags

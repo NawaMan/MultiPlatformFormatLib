@@ -108,7 +108,7 @@ cmake ..                                         `
     -DFMT_TEST=OFF                               `
     -DFMT_INSTALL=ON                             `
     -DBUILD_SHARED_LIBS=OFF                      `
-                                                 `
+    -DCMAKE_MSVC_RUNTIME_LIBRARY="MultiThreaded" `
     -DCMAKE_SYSTEM_NAME="Windows"                `
     -DCMAKE_SYSTEM_PROCESSOR="ARM64"             `
     -DCMAKE_C_COMPILER="clang"                   `
