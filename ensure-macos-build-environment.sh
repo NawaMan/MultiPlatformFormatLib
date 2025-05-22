@@ -31,7 +31,9 @@ brew install -q \
     unzip       \
     wget        \
     zip         \
-    2>&1 | grep -E 'Already installed|Installing|Pouring'
+    # | grep -E 'Already installed|Installing|Pouring'
+
+echo "Installed packages completed."
 
 # Call LLVM setup (in a separate script)
 ./ensure-macos-llvm-setup.sh
