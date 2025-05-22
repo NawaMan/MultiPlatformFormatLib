@@ -533,3 +533,11 @@ jobs:
           cd combine
           chmod +x ./combine-library.sh
           ./combine-library.sh ../versions.env
+
+      - name: Upload combined artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: fmt-combined
+          path: combine/fmt-*.zip
+          if-no-files-found: error
+          retention-days: 1
