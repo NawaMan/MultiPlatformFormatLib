@@ -380,6 +380,22 @@ jobs:
       - name: Build macOS Universal binary
         run: |
           source ensure-macos-build-environment.sh
+
+          brew install llvm@20
+          export PATH="/usr/local/opt/llvm@20/bin:$PATH"
+          export LDFLAGS="-L/usr/local/opt/llvm@20/lib"
+          export CPPFLAGS="-I/usr/local/opt/llvm@20/include"
+          
+          echo "=== Compiler Information ==="
+          echo "which clang      : $(which clang)"
+          echo "which clang++    : $(which clang++)"
+          echo "which llvm-ar    : $(which llvm-ar)"
+          echo "which llvm-ranlib: $(which llvm-ranlib)"
+          clang --version
+          clang++ --version
+          llvm-ar --version
+          llvm-ranlib --version
+
           ./build-macos-universal.sh
 
       - name: Upload build artifact
