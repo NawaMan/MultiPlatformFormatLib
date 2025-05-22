@@ -45,3 +45,12 @@ Generated on $(Get-Date -Format "yyyy-MM-dd HH:mm")
 
     Set-Content -Path "$TargetDir\README.md" -Value $readme
 }
+
+
+# Not sure this does not work. The error said the files do not exist.
+
+# Write-Output "Build flags:"
+# Get-Content -Path "$TargetDir\build-flags.txt"
+
+# Write-Output "README.md:"
+# Get-Content -Path "$TargetDir\README.md"

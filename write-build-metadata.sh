@@ -39,3 +39,10 @@ This archive contains a statically compiled build of the [fmt](https://github.co
 ---
 Generated on $(date)
 EOF
+
+
+echo "Build flags:"
+cat "$TARGET_DIR/build-flags.txt"
+
+echo "README.md:"
+cat "$TARGET_DIR/README.md"
