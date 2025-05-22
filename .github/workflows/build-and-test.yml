@@ -377,12 +377,9 @@ jobs:
       - name: Make scripts executable
         run: chmod +x *.sh sh-sources/*.sh
 
-      - name: Ensure build environment
-        run: |
-          ./ensure-macos-build-environment.sh
-
       - name: Build macOS Universal binary
         run: |
+          ./ensure-macos-build-environment.sh
           ./build-macos-universal.sh
 
       - name: Upload build artifact
