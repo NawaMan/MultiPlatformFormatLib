@@ -1,0 +1,6 @@
+# Build Flags
+CFLAGS   = -arch x86_64/arm64 -O2 -ffunction-sections -fdata-sections -fPIC -arch arm64 -isysroot /Applications/Xcode_15.2.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX14.2.sdk
+CXXFLAGS = -arch x86_64/arm64 -O2 -ffunction-sections -fdata-sections -fPIC -arch arm64 -isysroot /Applications/Xcode_15.2.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX14.2.sdk
+LDFLAGS  = -Wl,-dead_strip
+Compiler = Apple Clang 15
+Target   = macOS universal

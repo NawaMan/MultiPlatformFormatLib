@@ -1,0 +1,6 @@
+# Build Flags
+CFLAGS   = -O2 -flto -ffunction-sections -fdata-sections -fPIC
+CXXFLAGS = -O2 -flto -ffunction-sections -fdata-sections -fPIC
+LDFLAGS  = -Wl,--gc-sections
+Compiler = Clang 20
+Target   = Linux arm64

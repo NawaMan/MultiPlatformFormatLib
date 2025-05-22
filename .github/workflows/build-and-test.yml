@@ -512,5 +512,11 @@ jobs:
           pwd
           echo "Top-level contents:"
           ls -la
+          echo "Move to combine directory"
+          mv build combine/
           echo "Downloaded build artifacts:"
-          tree build
+          tree combine/build
+          echo "Combining libraries..."
+          cd combine
+          chmod +x ./combine-library.sh
+          ./combine-library.sh ../versions.env
