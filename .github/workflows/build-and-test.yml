@@ -379,7 +379,7 @@ jobs:
 
       - name: Build macOS Universal binary
         run: |
-          ./ensure-macos-build-environment.sh
+          source ensure-macos-build-environment.sh
           ./build-macos-universal.sh
 
       - name: Upload build artifact
