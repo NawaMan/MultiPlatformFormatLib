@@ -17,8 +17,8 @@ source sh-sources/common-source.sh
 source sh-sources/src-common.sh
 
 # 👇 Explicitly use Apple Clang
-export CC=/usr/bin/clang
-export CXX=/usr/bin/clang++
+export CC=${CC:-/usr/bin/clang}
+export CXX=${CXX:-/usr/bin/clang++}
 
 print "Clang       version: $($CC       --version)"
 print "Clang++     version: $($CXX      --version)"

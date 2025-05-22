@@ -391,10 +391,17 @@ jobs:
           echo "which clang++    : $(which clang++)"
           echo "which llvm-ar    : $(which llvm-ar)"
           echo "which llvm-ranlib: $(which llvm-ranlib)"
-          clang --version
-          clang++ --version
-          llvm-ar --version
-          llvm-ranlib --version
+
+          export CC=/usr/local/opt/llvm@20/bin/clang
+          export CXX=/usr/local/opt/llvm@20/bin/clang++
+          export AR=/usr/local/opt/llvm@20/bin/llvm-ar
+          export RANLIB=/usr/local/opt/llvm@20/bin/llvm-ranlib
+
+          echo "=== Compiler Info ==="
+          $CC --version
+          $CXX --version
+          $AR --version
+          $RANLIB --version
 
           ./build-macos-universal.sh
 
