@@ -412,7 +412,7 @@ jobs:
         with:
           name: fmt-macos-universal
           path: dist
-
+      
       - name: Ensure macOS build environment
         run: |
           ./ensure-macos-build-environment.sh
@@ -467,3 +467,50 @@ jobs:
         run: ./simple-test
         shell: bash
   
+  # Combine Libraries Job
+  combine-libraries:
+    name: Combine Libraries
+    runs-on: ubuntu-latest
+    needs: 
+      - build-library-linux-x86-64
+      - build-library-linux-arm-64
+      - build-library-windows-x86-64
+      - build-library-macos-universal
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Download build artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: fmt-linux-x86-64
+          path: build/build-linux-x86-64
+
+      - name: Download build artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: fmt-linux-arm-64
+          path: build/build-linux-arm-64
+
+      - name: Download build artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: fmt-windows-x86-64
+          path: build/build-windows-x86-64  
+
+      - name: Download build artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: fmt-macos-universal
+          path: build/build-macos-universal
+
+      - name: Show downloaded files
+        run: |
+          sudo apt-get update
+          sudo apt-get -y install tree
+          echo "Current directory:"
+          pwd
+          echo "Top-level contents:"
+          ls -la
+          echo "Downloaded build artifacts:"
+          tree build
