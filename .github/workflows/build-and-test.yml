@@ -351,6 +351,7 @@ jobs:
   #       run: .\simple-test-arm-64.exe
   #       shell: cmd
 
+
   # macOS Universal Build Job
   build-library-macos-universal:
     name: Build (macOS Universal)
@@ -516,14 +517,19 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get -y install tree
+
           echo "Current directory:"
           pwd
+
           echo "Top-level contents:"
           ls -la
+
           echo "Move to combine directory"
           mv build combine/
+
           echo "Downloaded build artifacts:"
           tree combine/build
+          
           echo "Combining libraries..."
           cd combine
           chmod +x ./combine-library.sh
