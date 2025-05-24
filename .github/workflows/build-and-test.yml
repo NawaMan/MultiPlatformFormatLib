@@ -65,7 +65,7 @@ jobs:
           mkdir -p build
           
           echo "Ensure build environment ..."
-          sudo ./ensure-linux-x86-build-test-environment.sh
+          sudo ./ensure-linux-x86-64-build-test-environment.sh
 
           echo "Build simple test ..."
           DIST_FILE=$(find ../dist -name 'fmt-*_linux-x86-64_*.zip' -type f)
@@ -157,29 +157,19 @@ jobs:
           arch: aarch64
           distro: ubuntu22.04
           run: |
-            # Set environment variables
-            export CLANG_VERSION=20
+            pushd tests
 
-            # Install minimal dependencies for testing
-            apt-get update
-            apt-get install -y           \
-              build-essential            \
-              cmake                      \
-              curl                       \
-              gnupg                      \
-              lsb-release                \
-              software-properties-common \
-              pkg-config                 \
-              unzip                      \
-              wget                       \
-              2>&1 | grep -E 'is already the newest version|Setting up|Preparing to unpack|Installing'
+            chmod +x *.sh
+            mkdir -p build
             
-            ./ensure-linux-llvm-setup.sh
+            echo "Ensure build environment ..."
+            ./ensure-linux-arm-64-build-test-environment.sh
 
-            DIST_FILE=$(find dist -name 'fmt-*_linux-arm-64_*.zip' -type f)
+            echo "Build simple test ..."
+            DIST_FILE=$(find ../dist -name 'fmt-*_linux-arm-64_*.zip' -type f)
+            ./build-simple-test-linux-arm-64.sh "$DIST_FILE"
 
-            cd tests
-            ./build-simple-test-linux-arm-64.sh "../$DIST_FILE"
+            popd
 
       - name: Upload test artifact
         uses: actions/upload-artifact@v4
@@ -208,6 +198,7 @@ jobs:
           run: |
             chmod +x simple-test
             ./simple-test
+
 
   # Windows Build Job
   build-library-windows-x86-64:
