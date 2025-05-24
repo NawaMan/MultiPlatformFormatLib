@@ -15,4 +15,6 @@ apt-get install -y  \
     2>&1           \
     | grep -E 'is already the newest version|Setting up|Preparing to unpack|Installing'
 
-../ensure-linux-llvm-setup.sh
+cd ..
+./ensure-linux-llvm-setup.sh
+cd tests

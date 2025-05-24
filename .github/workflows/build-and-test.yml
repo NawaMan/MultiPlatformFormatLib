@@ -62,7 +62,7 @@ jobs:
           pushd tests
 
           chmod +x *.sh
-          mkdir -p tests/build
+          mkdir -p build
           
           echo "Ensure build environment ..."
           sudo ./ensure-linux-x86-build-test-environment.sh
