@@ -59,22 +59,18 @@ jobs:
 
       - name: Run on x86-64
         run: |
-            # Install minimal dependencies for testing
-            sudo apt-get update
-            sudo apt-get install -y      \
-              build-essential            \
-              gnupg                      \
-              lsb-release                \
-              unzip                      \
-              wget                       \
-              2>&1 | grep -E 'is already the newest version|Setting up|Preparing to unpack|Installing'
+          pushd tests
 
-            sudo ./ensure-linux-llvm-setup.sh
+          chmod +x *.sh
+          mkdir -p tests/build
+          
+          echo "Ensure build environment ..."
+          sudo ./ensure-linux-x86-build-test-environment.sh
 
-            DIST_FILE=$(find dist -name 'fmt-*_linux-x86-64_*.zip' -type f)
+          echo "Build simple test ..."
+          ./build-simple-test-linux-x86-64.sh "fmt-*_linux-x86-64_*.zip"
 
-            cd tests
-            ./build-simple-test-linux-x86-64.sh "../$DIST_FILE"
+          popd
 
       - name: Upload test artifact
         uses: actions/upload-artifact@v4
